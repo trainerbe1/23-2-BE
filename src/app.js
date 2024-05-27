@@ -1,14 +1,11 @@
-const express = require('express')
-const app = express()
-const helmet = require('helmet')
-const port = 3000
-
-
-app.use(helmet())
-app.get('/', (req, res) => {
+import {web} from "./library/web.js";
+const port=5000
+web.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
-app.listen(port, () => {
+web.listen(port, () => {
   console.log(`mealmastery app listening on port ${port}`)
 })
+
+
