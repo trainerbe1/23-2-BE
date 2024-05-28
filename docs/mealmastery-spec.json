@@ -2,11 +2,619 @@
     "openapi":"3.0.2",
     "info": {
       "title":"mealmastery kitchen app",
-      "version":"1.0"
+      "version":"1.0",
+      "license": {
+        "name": "Apache 2.0",
+        "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+      }
     },
+    
     "servers": [
-      {"url":"https://api.server.test/v1"}
+      {"url": "http://localhost:5000/api/v1", "description": "development"}
     ],
     "paths": {
+      "/users":{
+        "post":{
+          "tags": ["users"],
+          "requestBody":{
+            "required": true,
+            "content": {
+              "application/json":{
+                "schema":{
+                  "type": "object",
+                  "properties": {
+                    "username":{
+                      "example": "new username"
+                    },
+                    "email":{
+                      "example": "example@mail.com"
+                    },
+                    "password":{
+                      "example":"newPassword"
+                    },
+                    "gender":{
+                      "example": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201":{
+              "description": "register users",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "type": "object",
+                    "properties": {
+                      "status":{
+                        "example": "success"
+                      },
+                      "statusCode":{
+                        "example": 201
+                      },
+                      "data":{
+                        "type": "object",
+                        "properties": {
+                          "userId":{
+                            "example": "user-fheruwfhre"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400":{
+              "description": "invalid payload",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/badRequest"
+                  }
+                }
+              }
+            },
+            "500":{
+              "description": "internal server error",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/internalServerError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/users/:userId":{
+        "get":{
+          "parameters": [
+            {
+              "name":"Authorization",
+              "in": "header",
+              "schema":{
+                "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InVzZXItRFNlYmZpbkVQcWc4b05VWEZSaE4iLCJpYXQiOjE3MTMxNTE1NTV9.RM6NKR7qb-p3WK5SQjiCiLZZcr-G1PDwm_yxEAkQxn8"
+              }
+            },
+            {
+              "name": "userId",
+              "required": true,
+              "in": "path",
+              "schema":{
+                "example":"user-cheiucegijfytd"
+              }
+            }
+          ],
+          "security": [
+            {
+              "jwt_meal":[]
+            }
+          ],
+          "tags": ["users"],
+          "responses": {
+            "200":{
+              "description": "get user specified",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "type": "object",
+                    "properties": {
+                      "status":{},
+                      "statusCode":{
+                        "example":200
+                      },
+                      "data":{
+                        "type": "object",
+                        "properties": {
+                          "id":{},
+                          "username":{},
+                          "email":{},
+                          "gender":{},
+                          "profilePictureUrl":{},
+                          "role":{},
+                          "createdAt":{},
+                          "updatedAt":{}
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401":{
+              "description": "unauthorized",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/unauthorized"
+                  }
+                }
+              }
+            },
+            "403":{
+              "description": "unauthorized",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/forbidden"
+                  }
+                }
+              }
+            },
+            "404":{
+              "description": "id not found",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/notFound"
+                  }
+                }
+              }
+            },
+            "500":{
+              "description": "oops, something error",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/internalServerError"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "patch":{
+          "tags": ["users"],
+          "requestBody":{
+            "content": {}
+          },
+          "responses": {
+            "200":{
+              "description": ""
+            }
+          }
+        },
+        "put":{
+          "tags": ["users"],
+          "requestBody":{
+            "content": {}
+          },
+          "responses": {
+            "200":{
+              "description": ""
+            }
+          }
+        }
+      },
+      "/users/{userId}/avatar":{
+        "put":{
+          "security": [
+            {
+              "Authorization":[]
+            }
+          ],
+          "tags": ["users"],
+          "description": "update user profile Picture ",
+          "parameters": [
+            {
+              "name": "userId",
+              "description": "user ID to update picture",
+              "in": "path",
+              "required": true ,
+              "schema":{
+                "type": "string",
+                "example": "user-awenwefhubwer75t6"
+              }
+            },
+            {
+              "name": "Authorization",
+              "in": "header",
+              "schema":{
+                "type": "string",
+                "example":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InVzZXItRFNlYmZpbkVQcWc4b05VWEZSaE4iLCJpYXQiOjE3MTMxNTE1NTV9.RM6NKR7qb-p3WK5SQjiCiLZZcr-G1PDwm_yxEAkQxn8"
+              }
+            }
+          ],
+          "requestBody":{
+            "required": false,
+            "content": {
+              "multipart/form-data":{
+                "schema":{
+                  "type": "string",
+                  "format": "base64"
+                },
+                "encoding": {
+                  "profilePicture":{
+                    "contentType": "image/png, image/jpeg,"
+                    
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200":{
+              "description": "update user by id",
+              "content": {
+                "application/json":{
+                  "schema":{
+
+                    "type": "object",
+                    "properties": {
+                      "status":{
+                        "type": "string",
+                        "example":"success"
+                      },
+                      "statusCode":{
+                        "type": "integer",
+                        "example":200
+                      },
+                      "data":{
+                        "type": "object",
+                        "properties": {
+                          "userId":{
+                            "type": "string",
+                            "example":"user-adniuweqr6q93_afsr"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400":{
+              "description": "invalid payload",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/badRequest"
+                  }
+                }
+              }
+            },
+            "401":{
+              "description": "unauthorized",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/unauthorized"
+                  }
+                }
+              }
+            },
+            "404":{
+              "description": "id not found",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/notFound"
+                  }
+                }
+              }
+            },
+            "500":{
+              "description": "oops, something error",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/internalServerError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/users/{userId}/change-password":{
+        "put":{
+          "tags": ["users"],
+          "security": [
+            {
+              "Authorization":[]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "userId",
+              "description": "user ID to update password",
+              "in": "path",
+              "required": true ,
+              "schema":{
+                "type": "string",
+                "example": "user-awenwefhubwer75t6"
+              }
+            },
+            {
+              "name": "Authorization",
+              "in": "header",
+              "schema":{
+                "type": "string",
+                "example":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InVzZXItRFNlYmZpbkVQcWc4b05VWEZSaE4iLCJpYXQiOjE3MTMxNTE1NTV9.RM6NKR7qb-p3WK5SQjiCiLZZcr-G1PDwm_yxEAkQxn8"
+              }
+            }
+          ],
+          "requestBody":{
+            "required": true,
+            "content": {
+              "application/json":{
+                "schema":{
+                  "type": "object",
+                  "properties": {
+                    "oldPassword":{
+                      "type": "string",
+                      "example":"Edu"
+                    },
+                    "newPassword":{
+                      "type": "string",
+                      "example":"newEdu"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200":{
+              "description": "update password by id",
+              "content": {
+                "application/json":{
+                  "schema":{
+
+                    "type": "object",
+                    "properties": {
+                      "status":{
+                        "type": "string",
+                        "example":"success"
+                      },
+                      "statusCode":{
+                        "type": "integer",
+                        "example":200
+                      },
+                      "data":{
+                        "type": "object",
+                        "properties": {
+                          "userId":{
+                            "example": "user-adwesdgawe7rt"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400":{
+              "description": "invalid payload",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/badRequest"
+                  }
+                }
+              }
+            },
+            "401":{
+              "description": "unauthorized",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/unauthorized"
+                  }
+                }
+              }
+            },
+            "404":{
+              "description": "id not found",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/notFound"
+                  }
+                }
+              }
+            },
+            "500":{
+              "description": "oops, something error",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/internalServerError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/users/login":{
+        "post":{
+          "tags": ["auth"],
+          "requestBody":{
+            "required": true,
+            "content": {
+              "application/json":{
+                "schema":{
+                  "type": "object",
+                  "properties": {
+                    "email":{
+                      "example": "example@mail.com"
+                    },
+                    "password":{
+                      "example": "newPassword"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201":{
+              "description": "register users",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "type": "object",
+                    "properties": {
+                      "status":{
+                        "example": "success"
+                      },
+                      "statusCode":{
+                        "example": 201
+                      },
+                      "data":{
+                        "type": "object",
+                        "properties": {
+                          "accToken":{
+                            "example": "eyJpZCI6InVzZXItRFNlYmZpbkVQcWc4b05VWEZSaE4iLCJpYXQiOjE3MTMxNTE1NTV9"
+                          },
+                          "refreshToken":{"example":"eyJpZCI6InVzZXItRFNlYmZpbkVQcWc4b05VWEZSaE4iLCJpYXQiOjE3MTMxNTE1NTV9"}
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400":{
+              "description": "invalid payload",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/badRequest"
+                  }
+                }
+              }
+            },
+            "500":{
+              "description": "internal server error",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/internalServerError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/users/logout":{
+        "delete":{
+          "tags": ["auth"],
+          "requestBody":{
+            "content": {}
+          },
+          "responses": {
+            "200":{
+              "description": ""
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "badRequest":{
+          "type": "object",
+          "properties": {
+            "status":{
+              "example":"fail"
+            },
+            "statusCode":{
+              "example":400
+            },
+            "message":{
+              "example": "invalid paylaod"
+            }
+          }
+        },
+        "unauthorized":{
+          "type": "object",
+          "properties": {
+            "status":{
+              "example":"fail"
+            },
+            "statusCode":{
+              "example":401
+            },
+            "message":{
+              "example": "unauthorized"
+            }
+          }
+        },
+        "forbidden":{
+          "type": "object",
+          "properties": {
+            "status":{
+              "example":"fail"
+            },
+            "statusCode":{
+              "example":403
+            },
+            "message":{
+              "example": "forbidden"
+            }
+          }
+        },
+        "notFound":{
+          "type": "object",
+          "properties": {
+            "status":{
+              "example":"fail"
+            },
+            "statusCode":{
+              "example":404
+            },
+            "message":{
+              "example": "id not found"
+            }
+          }
+        },
+        "internalServerError":{
+          "type": "object",
+          "properties": {
+            "status":{
+              "example":"fail"
+            },
+            "statusCode":{
+              "example":500
+            },
+            "message":{
+              "example": "internal server error"
+            }
+          }
+        }
+      },
+      "securitySchemes": {
+        "jwt_meal":{
+          "type": "http",
+          "scheme": "bearer"
+        }
+      }
     }
   }

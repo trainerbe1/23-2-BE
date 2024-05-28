@@ -1,11 +1,10 @@
-import {web} from "./library/web.js";
-const port=5000
+import { config } from './utils/config.js';
+import { web } from './library/web.js';
+
 web.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+  res.send('Hello World!');
+});
 
-web.listen(port, () => {
-  console.log(`mealmastery app listening on port ${port}`)
-})
-
-
+web.listen(config.app.port, () => {
+  console.log(`MealMastery app listening on port ${config.app.port}`);
+});
