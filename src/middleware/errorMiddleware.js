@@ -15,17 +15,10 @@ const errorMiddleware = async (err, req, res, next) => {
     }
 
     res.status(500).json({
-      status: "error",
+      status: err.status,
       statusCode: 500,
       message: err.message
     }).end();
-
-    const newResponse = h.response({
-      status: 'error',
-      message: 'terjadi kegagalan pada server kami',
-    });
-    newResponse.code(500);
-    return newResponse;
   }
 }
 
