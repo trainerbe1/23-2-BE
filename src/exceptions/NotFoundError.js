@@ -8,3 +8,8 @@ class NotFoundError extends ClientError {
 }
 
 export { NotFoundError }
+NotFoundError
+NotFoundError
+NotFoundErrorNotFoundError
+NotFoundError
+NotFoundError
