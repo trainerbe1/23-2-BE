@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 7
+    },
+    "auditLog": "/run/media/misno48/2234a5d9-84b7-4848-8195-8d4624d88adc/home/misno48/Development/Javascript/mealmastery-kitchen-app/logger/.d227292553aa0bb8005fb22ddd617ed0b7a17119-audit.json",
+    "files": [
+        {
+            "date": 1716927714176,
+            "name": "/run/media/misno48/2234a5d9-84b7-4848-8195-8d4624d88adc/home/misno48/Development/Javascript/mealmastery-kitchen-app/logger/application-2024-05-29-03.log",
+            "hash": "741f6ec54a266fd7e5b57ca44af90461df5f2c83239d71c485da793172b8de4b"
+        }
+    ],
+    "hashType": "sha256"
+}

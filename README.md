@@ -63,7 +63,7 @@
 
   `DATABASE_URL="mongodb+srv://username:password@cluster.mongodb.net/mydatabase?retryWrites=true&w=majority"`
 
-  `PORT=3000`
+  `PORT=5000`
 
 - **Setup Prisma**
 
@@ -71,7 +71,7 @@
 
   - migrate
 
-    `npm run start:migrate`
+    `npm run start:migrate --name [migrateName]`
 
 - **Run App**
 
