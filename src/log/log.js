@@ -22,7 +22,7 @@ const transport = new transports.DailyRotateFile({
 });
 
 const logger = createLogger({
-  level: 'info',
+  level: 'error',
   format: format.combine(
     format.timestamp({
       format: 'YYYY-MM-DD HH:mm:ss',

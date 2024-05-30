@@ -10,7 +10,6 @@ const config = {
     accessToken: process.env.ACCESS_TOKEN_KEY,
     refreshToken: process.env.REFRESH_TOKEN_KEY,
     ageToken: process.env.ACCESS_TOKEN_AGE,
-    ageTokenRefresh: process.env.REFRESH_TOKEN_AGE,
   },
 };
 

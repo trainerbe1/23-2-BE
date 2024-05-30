@@ -33,7 +33,7 @@
                       "example":"newPassword"
                     },
                     "gender":{
-                      "example": 0
+                      "example": true
                     }
                   }
                 }
@@ -94,10 +94,11 @@
         "get":{
           "parameters": [
             {
-              "name":"Authorization",
-              "in": "header",
+              "name":"meal_mastery",
+              "in": "cookie",
+              "required": true,
               "schema":{
-                "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InVzZXItRFNlYmZpbkVQcWc4b05VWEZSaE4iLCJpYXQiOjE3MTMxNTE1NTV9.RM6NKR7qb-p3WK5SQjiCiLZZcr-G1PDwm_yxEAkQxn8"
+                "example": " eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InVzZXItRFNlYmZpbkVQcWc4b05VWEZSaE4iLCJpYXQiOjE3MTMxNTE1NTV9.RM6NKR7qb-p3WK5SQjiCiLZZcr-G1PDwm_yxEAkQxn8"
               }
             },
             {
@@ -231,11 +232,11 @@
               }
             },
             {
-              "name": "Authorization",
-              "in": "header",
+              "name":"meal_mastery",
+              "in": "cookie",
+              "required": true,
               "schema":{
-                "type": "string",
-                "example":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InVzZXItRFNlYmZpbkVQcWc4b05VWEZSaE4iLCJpYXQiOjE3MTMxNTE1NTV9.RM6NKR7qb-p3WK5SQjiCiLZZcr-G1PDwm_yxEAkQxn8"
+                "example": " eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InVzZXItRFNlYmZpbkVQcWc4b05VWEZSaE4iLCJpYXQiOjE3MTMxNTE1NTV9.RM6NKR7qb-p3WK5SQjiCiLZZcr-G1PDwm_yxEAkQxn8"
               }
             }
           ],
@@ -350,11 +351,11 @@
               }
             },
             {
-              "name": "Authorization",
-              "in": "header",
+              "name":"meal_mastery",
+              "in": "cookie",
+              "required": true,
               "schema":{
-                "type": "string",
-                "example":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InVzZXItRFNlYmZpbkVQcWc4b05VWEZSaE4iLCJpYXQiOjE3MTMxNTE1NTV9.RM6NKR7qb-p3WK5SQjiCiLZZcr-G1PDwm_yxEAkQxn8"
+                "example": " eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InVzZXItRFNlYmZpbkVQcWc4b05VWEZSaE4iLCJpYXQiOjE3MTMxNTE1NTV9.RM6NKR7qb-p3WK5SQjiCiLZZcr-G1PDwm_yxEAkQxn8"
               }
             }
           ],
@@ -485,15 +486,6 @@
                       },
                       "statusCode":{
                         "example": 201
-                      },
-                      "data":{
-                        "type": "object",
-                        "properties": {
-                          "accToken":{
-                            "example": "eyJpZCI6InVzZXItRFNlYmZpbkVQcWc4b05VWEZSaE4iLCJpYXQiOjE3MTMxNTE1NTV9"
-                          },
-                          "refreshToken":{"example":"eyJpZCI6InVzZXItRFNlYmZpbkVQcWc4b05VWEZSaE4iLCJpYXQiOjE3MTMxNTE1NTV9"}
-                        }
                       }
                     }
                   }

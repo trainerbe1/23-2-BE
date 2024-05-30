@@ -1,8 +1,8 @@
-import { ClientError } from "./ClientError";
+import { ClientError } from "./ClientError.js";
 
 class AuthenticationError extends ClientError {
   constructor(message) {
-    super(401, message);
+    super(message, 401);
     this.name = 'AuthenticationError';
   }
 }

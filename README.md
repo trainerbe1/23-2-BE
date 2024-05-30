@@ -67,11 +67,9 @@
 
 - **Setup Prisma**
 
+    `npx prisma init`
+
   `npx prisma generate`
-
-  - migrate
-
-    `npm run start:migrate --name [migrateName]`
 
 - **Run App**
 
@@ -80,6 +78,10 @@
   - **Run Test**
 
   `npm run test`
+
+- **How To Push New Schema Model**
+
+    `npx prisma db push`
 <!-- link -->
 [VueJS-url]: https://vuejs.org/
 [VueJS]: https://img.shields.io/badge/vue.js-white?style=for-the-badge&logo=vue.js&logoColor=43853F

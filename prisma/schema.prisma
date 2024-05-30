@@ -12,3 +12,22 @@ datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id              String   @id @map("_id") @db.String()
+  username        String   @db.String()
+  email           String   @unique @db.String()
+  password        String   @db.String()
+  gender          Boolean  @db.Bool()
+  profile_picture String?  @db.String()
+  role            Role     @default(USER)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  @@map("users")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
