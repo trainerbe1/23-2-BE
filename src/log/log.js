@@ -10,8 +10,8 @@ const colors = {
   info: 'blue',
   http: 'magenta',
   debug: 'white',
-}
-winston.addColors(colors)
+};
+winston.addColors(colors);
 
 const transport = new transports.DailyRotateFile({
   filename: path.join(__dirname, 'src/log/logger/application-%DATE%.log'),

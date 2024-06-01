@@ -3,7 +3,7 @@ import Jwt from 'jsonwebtoken';
 import { config } from "../utils/config.js";
 import { AuthorizationError } from "../exceptions/AuthorizationError.js";
 
-export const authMiddleware = async (req, res, next) => {
+export const authMiddleware = (req, res, next) => {
   const token = req.cookies.meal_mastery;
   if (!token) {
     return next(new AuthenticationError('unauthorized'));
@@ -19,4 +19,4 @@ export const authMiddleware = async (req, res, next) => {
     }
     next(new AuthorizationError('not enough access'));
   }
-}
+};

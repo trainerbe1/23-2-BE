@@ -21,6 +21,7 @@ model User {
   gender          Boolean  @db.Bool()
   profile_picture String?  @db.String()
   role            Role     @default(USER)
+  is_delete       Boolean  @default(false) @db.Bool()
   created_at      DateTime @default(now())
   updated_at      DateTime @updatedAt
 

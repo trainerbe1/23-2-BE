@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import morgan from "morgan";
 import {logger} from "../log/log.js";
 
@@ -31,4 +32,4 @@ const morganMiddleware = morgan(
   { stream, skip }
 );
 
-export default morganMiddleware
+export default morganMiddleware;

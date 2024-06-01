@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -13,4 +14,4 @@ const config = {
   },
 };
 
-export { config }
+export { config };
