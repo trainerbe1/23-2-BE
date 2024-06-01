@@ -2,7 +2,7 @@ import express from "express";
 import helmet from "helmet";
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import { errorMiddleware } from "../middleware/errorMiddleware.js";
+import {errorMiddleware} from "../middleware/errorMiddleware.js";
 import morganMiddleware from "../middleware/morganMiddleware.js";
 import UsersRouter from '../routes/UsersRoutes.js';
 

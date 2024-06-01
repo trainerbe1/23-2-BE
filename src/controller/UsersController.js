@@ -1,12 +1,10 @@
 import usersService from '../services/UsersService.js';
-import jwt from 'jsonwebtoken';
-import { generateAccessToken, generateRefreshToken } from '../utils/tokenManager.js';
-// import { getUserIdFromToken } from "../utils/authUtils.js";
+import { generateAccessToken } from '../utils/tokenManager.js';
 
-export const register = async (req, res, next) => {
+const register = async (req, res, next) => {
   try {
     const payload = req.body;
-    const result = await usersService.register(payload)
+    const result = await usersService.register(payload);
 
 
     res.status(201).json({
@@ -20,9 +18,9 @@ export const register = async (req, res, next) => {
   } catch (e) {
     next(e);
   }
-} 
+}; 
 
-export const login = async (req, res, next) => {
+const login = async (req, res, next) => {
   try {
     const payload = req.body;
     const result = await usersService.login(payload);
@@ -38,51 +36,86 @@ export const login = async (req, res, next) => {
   } catch (e) {
     next(e);
   }
-} 
+}; 
 
-export const getUserById = async (req, res, next) => {
+const getUserById = async (req, res, next) => {
   try {
+    const id = req.params.userId;
     res.status(200).json({
       status: 'success',
       statusCode: 200,
-      data: await usersService.getUserById(req.params.userId)
+      data: await usersService.getUserById(id)
     });
 
   } catch (e) {
     next(e);
   }
-} 
+}; 
 
-// const editUserById = async (req, res, next) => {
-//   try {
-//     const userId = await getUserIdFromToken(req);
+const editUserById = async (req, res, next) => {
+  try {
+    const payload = req.body;
+    const id = req.params.userId;
 
-//     const requestedUserId = req.params.userId;
+    res.status(200).json({
+      status: 'success',
+      statusCode: 200,
+      message: 'User updated successfully',
+      data: await usersService.editUserById(payload, id)
+    });
 
-//     if (userId !== requestedUserId) {
-//       return res.status(403).json({
-//         status: 'fail',
-//         statusCode: 403,
-//         message: 'Forbidden: Not enough access',
-//       });
-//     }
-//     const result = await usersService.editUserById(req.body, requestedUserId);
+  } catch (e) {
+    next(e);
+  }
+}; 
 
-//     res.status(200).json({
-//       status: 'success',
-//       statusCode: 200,
-//       message: 'User updated successfully',
-//       data: {
-//         userId: result.id
-//       }
-//     });
+const editPasswordById = async(req, res, next) => {
+  try {
+    const id = req.params.userId;
+    const newPassword = req.body;
 
-//   } catch (e) {
-//     next(e);
-//   }
-// } 
+    res.status(200).json({
+      status: 'success',
+      statusCode: 200,
+      message: 'update password successfully',
+      data: await usersService.changePassword(newPassword, id)
+    });
+  } catch (e) {
+    next(e);
+  }
+};
 
-export const logout = async (req, res, next) => {
+const editEmail = async(req, res, next) => {
+  try {
+    const id = req.params.userId;
+    const payload = req.body;
+
+    res.status(200).json({
+      status: 'success',
+      statusCode: 200,
+      message: 'email update successfully',
+      data: await usersService.changeEmail(payload, id)
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+const deleteUser = async(req, res, next) => {
+  try {
+    const id = req.params.userId;
+    res.status(200).json({
+      status: 'success',
+      statusCode: 200,
+      data: await usersService.deleteUser(id)
+    });
+
+  } catch (e) {
+    next(e);
+  }
+};
+
+const logout =  (req, res, next) => {
   try {
 
     res.clearCookie('meal_mastery',{
@@ -96,4 +129,6 @@ export const logout = async (req, res, next) => {
   } catch (e) {
     next(e);
   }
-} 
+}; 
+
+export default { register, login, getUserById, editUserById, editPasswordById, editEmail, deleteUser, logout};

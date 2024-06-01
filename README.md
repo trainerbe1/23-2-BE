@@ -82,6 +82,12 @@
 - **How To Push New Schema Model**
 
     `npx prisma db push`
+
+- **How to check error and fix**
+
+    `npm run lint`
+
+    `npm run lint:fix`
 <!-- link -->
 [VueJS-url]: https://vuejs.org/
 [VueJS]: https://img.shields.io/badge/vue.js-white?style=for-the-badge&logo=vue.js&logoColor=43853F

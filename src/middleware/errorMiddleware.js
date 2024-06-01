@@ -1,6 +1,6 @@
 import { ClientError } from "../exceptions/ClientError.js";
 
-const errorMiddleware = async (err, req, res, next) => {
+const errorMiddleware = (err, req, res, next) => {
   if(!err) {
     next();
     return;
@@ -20,8 +20,8 @@ const errorMiddleware = async (err, req, res, next) => {
       }).end();
     }
   }
-}
+};
 
 export {
   errorMiddleware
-}
+};
