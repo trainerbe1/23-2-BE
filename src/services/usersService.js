@@ -90,7 +90,7 @@ const login = async (payload) => {
 
   return {
     id: user.id,
-    username: user.uname,
+    username: user.username,
     email: user.email,
     gender: user.gender,
     profilePictureUrl: user.profile_picture,

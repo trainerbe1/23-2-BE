@@ -32,3 +32,13 @@ enum Role {
   USER
   ADMIN
 }
+
+model Ingredient {
+  id         String   @id @map("_id") @db.String
+  name       String   @db.String
+  unit       String   @db.String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("ingredients")
+}

@@ -1,4 +1,4 @@
-import usersService from '../services/UsersService.js';
+import usersService from '../services/usersService.js';
 import { generateAccessToken } from '../utils/tokenManager.js';
 
 const register = async (req, res, next) => {
