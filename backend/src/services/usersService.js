@@ -26,7 +26,8 @@ const register = async (payload) => {
     username: payload.username,
     email: payload.email,
     password: hash,
-    gender: payload.gender
+    gender: payload.gender,
+    role: payload.role
   };
 
 
@@ -90,7 +91,7 @@ const login = async (payload) => {
 
   return {
     id: user.id,
-    username: user.uname,
+    username: user.username,
     email: user.email,
     gender: user.gender,
     profilePictureUrl: user.profile_picture,
@@ -121,10 +122,6 @@ const editUserById = async(payload, id) => {
 
   if(user.gender) {
     data.gender = user.gender;
-  }
-
-  if(user.password) {
-    data.password = user.password;
   }
 
   return await prismaClient.user.update({
