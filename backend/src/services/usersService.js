@@ -123,10 +123,6 @@ const editUserById = async(payload, id) => {
     data.gender = user.gender;
   }
 
-  if(user.password) {
-    data.password = user.password;
-  }
-
   return await prismaClient.user.update({
     where: {
       id: id

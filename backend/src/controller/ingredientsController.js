@@ -31,4 +31,21 @@ const getIngredients = async(req, res, next) => {
   }
 };
 
-export default {addIngredient, getIngredients};
+const editIngredientById = async(req, res, next) => {
+  try {
+    const id = req.params.ingredientId;
+    const payload = req.body;
+
+    res.status(200).json({
+      status: 'success',
+      statusCode: 200,
+      message: 'User updated successfully',
+      data: await ingredientsService.
+      editIngredientById(id, payload)
+    });
+  } catch (e) {
+    next(e); 
+  }
+};
+
+export default {addIngredient, getIngredients, editIngredientById};

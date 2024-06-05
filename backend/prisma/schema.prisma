@@ -35,8 +35,9 @@ enum Role {
 
 model Ingredient {
   id         String   @id @map("_id") @db.String
-  name       String   @db.String
-  unit       String   @db.String
+  name       String   @db.String()
+  unit       String   @db.String()
+  is_delete  Boolean  @db.Bool()
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
