@@ -26,7 +26,8 @@ const register = async (payload) => {
     username: payload.username,
     email: payload.email,
     password: hash,
-    gender: payload.gender
+    gender: payload.gender,
+    role: payload.role
   };
 
 

@@ -1,14 +1,16 @@
 import { NotFoundError } from '../exceptions/NotFoundError.js';
 import {prismaClient} from '../library/database.js';
 import {nanoid} from 'nanoid';
+import { createIngredientValidator, updateIngredientValidator } from '../validator/ingredientsValidator.js';
+import { validate } from '../validator/index.js';
 
-const addIngredient = async(payload) => {
-  // const user = validate(registerUserValidator, payload);
+const addIngredient = async (payload) => {
+  const ingredient = validate(createIngredientValidator, payload);
 
   const newIngredient = {
     id: `ingredient-${nanoid(16)}`,
-    name: payload.name,
-    unit: payload.unit,
+    name: ingredient.name,
+    unit: ingredient.unit
   };
 
 
@@ -43,6 +45,8 @@ const getIngredients = async() => {
 };
 
 const editIngredientById = async(id, payload) => {
+  const ingredientRequest = validate(updateIngredientValidator, payload);
+
   const ingredient = await prismaClient.ingredient.findUnique({
     where:{
       id: id,
@@ -53,21 +57,14 @@ const editIngredientById = async(id, payload) => {
     throw new NotFoundError('id not found');
   }
 
-  const data = {};
-
-  if(ingredient.name) {
-    data.nama = ingredient.name;
-  }
-
-  if(ingredient.unit) {
-    data.unit = ingredient.unit;
-  }
-
   return await prismaClient.ingredient.update({
     where: {
       id: id
     },
-    data: data,
+    data: {
+      name: ingredientRequest.name,
+      unit: ingredientRequest.unit
+    },
     select: {
       id: true,
     }
@@ -75,18 +72,15 @@ const editIngredientById = async(id, payload) => {
 };
 
 const deleteIngredientById = async(id) => {
-  const user = await prismaClient.ingredient.update({
+  const user = await prismaClient.ingredient.delete({
     where:{
       id: id
-    },
-    data:{
-      is_delete: true
     }
   });
 
   if(!user) {
     throw new NotFoundError('id not found');
   }
-}
+};
 
-export default { getIngredients, addIngredient, editIngredientById};
+export default { getIngredients, addIngredient, editIngredientById, deleteIngredientById};

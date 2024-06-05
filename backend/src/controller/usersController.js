@@ -30,7 +30,8 @@ const login = async (req, res, next) => {
     res.cookie('meal_mastery', accessToken, { httpOnly: true }).status(201).json({
       status: 'success',
       statusCode: 201,
-      message: 'login successfully'
+      message: 'login successfully',
+      data: result
     });
 
   } catch (e) {

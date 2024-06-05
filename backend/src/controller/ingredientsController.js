@@ -48,4 +48,20 @@ const editIngredientById = async(req, res, next) => {
   }
 };
 
-export default {addIngredient, getIngredients, editIngredientById};
+const deleteIngredientById = async(req, res, next) => {
+  try {
+    const id = req.params.ingredientId;
+
+    res.status(200).json({
+      status: 'success',
+      statusCode: 200,
+      message: 'ingredient deleted successfully',
+      data: await ingredientsService.
+      deleteIngredientById(id)
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+export default {addIngredient, getIngredients, editIngredientById, deleteIngredientById};
