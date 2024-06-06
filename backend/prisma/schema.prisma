@@ -43,3 +43,13 @@ model Ingredient {
 
   @@map("ingredients")
 }
+
+model Category{
+  id              String   @id @map("_id") @db.String()
+  name            String   @db.String()
+  description     String   @db.String()
+  created_at       DateTime @default(now())
+  updated_at      DateTime @updatedAt     
+
+  @@map("category")       
+}
