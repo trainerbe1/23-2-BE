@@ -6,6 +6,8 @@ import {errorMiddleware} from "../middleware/errorMiddleware.js";
 import morganMiddleware from "../middleware/morganMiddleware.js";
 import usersRouter from '../routes/usersRoutes.js';
 import ingredientsRouter from '../routes/ingredientsRouter.js';
+import categoryRouter from '../routes/categoryRoutes.js';
+
 
 
 export const web = express();
@@ -16,6 +18,7 @@ web.use(cookieParser());
 
 web.use('/api/v1', usersRouter);
 web.use('/api/v1', ingredientsRouter);
+web.use('/api/v1', categoryRouter);
 
 web.use(morganMiddleware);
 web.use(errorMiddleware);
