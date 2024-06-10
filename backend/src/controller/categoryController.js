@@ -17,13 +17,7 @@ const getAllCategory = async (req, res, next) => {
 const getCategoryById = async (req, res, next) => {
   try {
     const { categoryId } = req.params;
-    
-    console.log(`Received ID: ${categoryId}`); 
-    
     const category = await categoryService.getCategoryById(categoryId);
-
-    console.log(`Category found: ${JSON.stringify(category)}`);
-
     res.status(200).json({
       status: 'success',
       statusCode: 200,
