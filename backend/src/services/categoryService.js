@@ -33,7 +33,7 @@ const createCategory = async (payload) => {
     update_at: payload.update_at,
   };
 
-  return prismaClient.category.create({
+  return await prismaClient.category.create({
     data: newCategory,
     select: {
       id: true,

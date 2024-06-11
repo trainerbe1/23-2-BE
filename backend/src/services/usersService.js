@@ -135,6 +135,32 @@ const editUserById = async(payload, id) => {
   });
 };
 
+const editAvatarUser = async(id, payload) => {
+
+  const user = await prismaClient.user.findUnique({
+    where:{
+      id: id,
+    },
+  });
+
+  if(!user) {
+    throw new NotFoundError('id not found');
+  }
+
+  return await prismaClient.user.update({
+    where: {
+      id: id
+    },
+    data: {
+      profile_picture: payload,
+    },
+    select: {
+      id: true,
+      profile_picture: true
+    }
+  });
+};
+
 const changePassword = async(payload, id) => {
   const passwordRequest = validate(putUserChangePasswordValidator, payload);
 
@@ -238,4 +264,4 @@ const deleteUser = async(id) => {
   }
 };
 
-export  default {register, login, getUserById, editUserById, changePassword, changeEmail, deleteUser};
+export  default {register, login, getUserById, editUserById, changePassword,editAvatarUser, changeEmail, deleteUser};

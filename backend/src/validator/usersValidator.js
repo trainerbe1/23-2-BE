@@ -17,7 +17,7 @@ export const loginUserValidator = Joi.object({
 export const patchUserValidator = Joi.object({
   username: Joi.string().min(3).max(100).required(),
   gender: Joi.boolean().required(),
-  password: Joi.string().min(8).required()
+  password: Joi.string().min(8).required(),
 });
 
 export const putUserChangePasswordValidator = Joi.object({
@@ -29,3 +29,7 @@ export const putUserChangeEmailValidator = Joi.object({
   oldEmail: Joi.string().email().required(),
   newEmail: Joi.string().email().required()
 });
+
+export const userPictureValidator = Joi.object({
+  'content-type': Joi.string().valid('image/jpeg', 'image/png').required()
+}).unknown();

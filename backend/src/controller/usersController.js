@@ -1,4 +1,6 @@
+import { InvariantError } from '../exceptions/InvariantError.js';
 import usersService from '../services/usersService.js';
+import { deleteFile } from '../utils/deleteFile.js';
 import { generateAccessToken } from '../utils/tokenManager.js';
 
 const register = async (req, res, next) => {
@@ -70,6 +72,46 @@ const editUserById = async (req, res, next) => {
   }
 }; 
 
+const editAvatar = async (req, res, next) => {
+  try {
+    const payload = req.file;
+
+    if(!payload) {
+      throw new InvariantError('input kosong');
+    }
+
+    const id = req.params.userId;
+
+    let avatarExists = false;
+    let oldAvatarFilename = null;
+
+    const avatarUrl = (await usersService.getUserById(id)).profilePictureUrl;
+    if (avatarUrl) {
+      avatarExists = true;
+      oldAvatarFilename = avatarUrl.split('/').pop();
+    }
+
+    const filename = payload.filename;
+    const profilePicturePath = `/uploads/${filename}`;
+
+    const profilePicture = await usersService.editAvatarUser(id, profilePicturePath);
+
+    if (avatarExists) {
+      deleteFile(oldAvatarFilename);
+    }
+
+    res.status(200).json({
+      status: 'success',
+      statusCode: 200,
+      message: 'User updated successfully',
+      data: profilePicture,
+    });
+
+  } catch (e) {
+    next(e);
+  }
+}; 
+
 const editPasswordById = async(req, res, next) => {
   try {
     const id = req.params.userId;
@@ -132,4 +174,4 @@ const logout =  (req, res, next) => {
   }
 }; 
 
-export default { register, login, getUserById, editUserById, editPasswordById, editEmail, deleteUser, logout};
+export default { register, login, getUserById, editUserById, editPasswordById, editEmail, deleteUser, editAvatar, logout};
