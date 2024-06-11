@@ -44,22 +44,40 @@ model Ingredient {
   @@map("ingredients")
 }
 
-model Category{
-  id              String   @id @map("_id") @db.String()
-  name            String   @db.String()
-  description     String   @db.String()
-  created_at       DateTime @default(now())
-  updated_at      DateTime @updatedAt     
+model Category {
+  id          String   @id @map("_id") @db.String()
+  name        String   @db.String()
+  description String   @db.String()
+  recipes     Recipe[]
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
 
-  @@map("category")       
+  @@map("categories")
 }
 
 model Video {
-  id        String   @id @map("_id") @db.String()
-  name      String   @db.String()
-  link      String   @db.String()
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @map("_id") @db.String()
+  name       String   @db.String()
+  link       String   @db.String()
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  recipe     Recipe?
 
-  @@map("Video")  
+  @@map("videos")
+}
+
+model Recipe {
+  id             String   @id @map("_id") @db.String()
+  descriptions   String   @db.String()
+  cuisine        String   @db.String()
+  instructions   String   @db.String()
+  recipe_picture String   @db.String()
+  category_id    String   @unique @db.String()
+  video_id       String   @unique @db.String()
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+  category       Category @relation(fields: [category_id], references: [id])
+  video          Video    @relation(fields: [video_id], references: [id])
+
+  @@map("recipes")
 }
