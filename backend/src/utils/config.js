@@ -5,6 +5,7 @@ dotenv.config();
 const config = {
   app: {
     port: process.env.PORT,
+    host: process.env.HOST,
     dbUrl: process.env.DATABASE_URL
   },
   jwtToken: {
