@@ -68,11 +68,12 @@ model Video {
 
 model Recipe {
   id             String   @id @map("_id") @db.String()
+  name           String   @db.String
   descriptions   String   @db.String()
   cuisine        String   @db.String()
   instructions   String   @db.String()
   recipe_picture String   @db.String()
-  category_id    String   @unique @db.String()
+  category_id    String   @db.String()
   video_id       String   @unique @db.String()
   created_at     DateTime @default(now())
   updated_at     DateTime @updatedAt

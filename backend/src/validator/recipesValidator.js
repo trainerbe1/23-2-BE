@@ -1,6 +1,7 @@
 import Joi from "joi";
 
 export const createRecipesValidator = Joi.object({
+  name: Joi.string().required(),
   descriptions: Joi.string().required(),
   cuisine: Joi.string().required(),
   instructions: Joi.string().required(),

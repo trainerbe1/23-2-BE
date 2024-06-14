@@ -9,6 +9,7 @@ const addRecipe = async (payload, url) => {
 
   const newRecipe = {
     id: `recipe-${nanoid(16)}`,
+    name: recipe.name,
     descriptions: recipe.descriptions,
     cuisine: recipe.cuisine,
     instructions: recipe.instructions,
@@ -26,8 +27,33 @@ const addRecipe = async (payload, url) => {
   });
 };
 
-const getRecipe = async() => {
+const getRecipe = async(recipeName, categoryName, page, limit) => {
+
+  const pageNumber = parseInt(page, 10);
+  const limitNumber = parseInt(limit, 10);
+
+  // Hitung jumlah hasil yang akan dilewati
+  const skip = (pageNumber - 1) * limitNumber;
+
   const recipe = await prismaClient.recipe.findMany({
+    where: {
+      AND: [
+        recipeName ? {
+          name: {
+            contains: recipeName,
+            mode: 'insensitive',
+          },
+        } : {},
+        categoryName ? {
+          category: {
+            name: {
+              contains: categoryName,
+              mode: 'insensitive',
+            },
+          },
+        } : {},
+      ],
+    },
     include:{
       category: {
         select: {
@@ -41,10 +67,16 @@ const getRecipe = async() => {
         }
       }
     },
+    orderBy:{
+      created_at: 'desc'
+    },
+    skip: skip,
+    take: limitNumber
   });
 
   const recipes = recipe.map((r) => ({
     id: r.id,
+    name: r.name,
     descriptions: r.descriptions,
     cuisine: r.cuisine,
     instructions: r.instructions,
@@ -96,6 +128,8 @@ const getRecipeById = async(id) => {
     updatedAt: recipe.updated_at
   };
 };
+
+const editRecipeById = async(id, payload, url) => {}
 
 const deleteRecipeById = async(id) => {
   const recipe = await prismaClient.recipe.findUnique({
