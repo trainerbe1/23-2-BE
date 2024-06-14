@@ -1,26 +1,36 @@
+<!-- src/views/HomeView.vue -->
 <template>
-  <div class="d-flex flex-column min-vh-100">
+  <div>
     <AppNavbar />
     <HeroSection />
     <div class="container">
-      <h2>Isi card recipe</h2>
+      <h2>For You</h2>
+      <RecipeList :recipes="recipes" />
     </div>
     <AppFooter />
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import AppNavbar from "@/components/AppNavbar.vue";
-import AppFooter from "@/components/AppFooter.vue";
-import HeroSection from "@/components/Hero.vue";
+import { recipes } from "/src/mockData";
+import AppNavbar from '../components/AppNavbar.vue';
+import AppFooter from '../components/AppFooter.vue';
+import RecipeList from '../components/RecipeList.vue';
+import HeroSection from '../components/Hero.vue';
 
 export default {
-  name: "HomeView",
-  components: {
-    AppNavbar,
-    AppFooter,
-    HeroSection,
+  name: 'HomeView',
+  components: { AppNavbar, AppFooter, RecipeList, HeroSection },
+  data() {
+    return {
+      recipes,
+    };
   },
 };
 </script>
+
+<style scoped>
+.container {
+  padding: 20px;
+}
+</style>

@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import RecipeList from '../views/RecipeListPage.vue'
+import RecipeListPage from '../views/RecipeListPage.vue'
 import RecipeDetail from '../views/RecipeDetail.vue'
 import FavoritePage from '../views/Favorite.vue'
 import MealPlanning from '../views/Meal.vue'
@@ -13,6 +13,7 @@ import EditPassword from '../views/EditPassword.vue'
 import AboutUs from '../views/AboutUs.vue'
 import HelpPage from '../views/Help.vue'
 
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -23,13 +24,13 @@ const routes = [
   },
 
   {
-    path: '/RecipeList',
-    name: 'RecipeList',
-    component: RecipeList
+    path: '/recipe-list',
+    name: 'RecipeListPage',
+    component: RecipeListPage
   },
 
   {
-    path: '/RecipeDetail',
+    path: '/recipe/:id',
     name: 'RecipeDetail',
     component: RecipeDetail
   },
