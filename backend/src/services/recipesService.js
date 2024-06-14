@@ -1,26 +1,26 @@
 import { nanoid } from "nanoid";
 import { prismaClient } from "../library/database.js";
 import { validate } from "../validator/index.js";
-import { createRecipesValidator } from "../validator/recipesValidator.js";
+import { createRecipesValidator, updateRecipesValidator } from "../validator/recipesValidator.js";
 import { NotFoundError } from "../exceptions/NotFoundError.js";
 
 const addRecipe = async (payload, url) => {
   const recipe = validate(createRecipesValidator, payload);
 
-  const newRecipe = {
-    id: `recipe-${nanoid(16)}`,
-    name: recipe.name,
-    descriptions: recipe.descriptions,
-    cuisine: recipe.cuisine,
-    instructions: recipe.instructions,
-    recipe_picture: url,
-    category_id: recipe.categoryId,
-    video_id: recipe.videoId
-  };
-
-
   return await prismaClient.recipe.create({
-    data: newRecipe,
+    data: {
+      id: `recipe-${nanoid(16)}`,
+      name: recipe.name,
+      descriptions: recipe.descriptions,
+      cuisine: recipe.cuisine,
+      instructions: recipe.instructions,
+      recipe_picture: url,
+      category_id: recipe.categoryId,
+      video_id: recipe.videoId,
+      ingredients: {
+        connect: recipe.ingredientId.map(id => ({id}))
+      }
+    },
     select: {
       id: true,
     }
@@ -55,6 +55,13 @@ const getRecipe = async(recipeName, categoryName, page, limit) => {
       ],
     },
     include:{
+      ingredients: {
+        select:{
+          name: true,
+          unit: true,
+          quantity: true
+        }
+      },
       category: {
         select: {
           name: true,
@@ -81,6 +88,7 @@ const getRecipe = async(recipeName, categoryName, page, limit) => {
     cuisine: r.cuisine,
     instructions: r.instructions,
     recipePictureUrl: r.recipe_picture,
+    ingredients: r.ingredients,
     categoryName: r.category.name,
     videoName: r.video.name,
     link: r.video.link,
@@ -97,6 +105,13 @@ const getRecipeById = async(id) => {
       id: id,
     },
     include:{
+      ingredients: {
+        select:{
+          name: true,
+          unit: true,
+          quantity: true
+        }
+      },
       category: {
         select: {
           name: true,
@@ -121,6 +136,7 @@ const getRecipeById = async(id) => {
     cuisine: recipe.cuisine,
     instructions: recipe.instructions,
     recipePictureUrl: recipe.recipe_picture,
+    ingredients: recipe.ingredients,
     categoryName: recipe.category.name,
     videoName: recipe.video.name,
     link: recipe.video.link,
@@ -129,7 +145,43 @@ const getRecipeById = async(id) => {
   };
 };
 
-const editRecipeById = async(id, payload, url) => {}
+const editRecipeById = async(id, payload, recipePicture) => {
+  const recipe = validate(updateRecipesValidator, payload);
+
+  const recipeCount = await prismaClient.recipe.findUnique({
+    where: {
+      id: id
+    }
+  });
+
+  if(!recipeCount) {
+    throw new NotFoundError('Id not found');
+  }
+
+  const data = {...recipe};
+
+  if(recipeCount.recipe_picture) {
+    data.recipe_picture = recipePicture;
+  }
+
+  delete data.ingredientId;
+  return await prismaClient.recipe.update({
+    where: {
+      id: id,
+    },
+    data: {
+      ...data,
+      ingredients: {
+        set: [],
+        connect: recipe.ingredientId.map(id => ({id}))
+      }
+    },
+    select: {
+      id: true
+    }
+  });
+
+};
 
 const deleteRecipeById = async(id) => {
   const recipe = await prismaClient.recipe.findUnique({
@@ -149,4 +201,4 @@ const deleteRecipeById = async(id) => {
   });
 };
 
-export default {addRecipe,getRecipe, getRecipeById, deleteRecipeById};
+export default {addRecipe,getRecipe, getRecipeById, editRecipeById, deleteRecipeById};

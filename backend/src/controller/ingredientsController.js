@@ -8,7 +8,6 @@ const addIngredient = async(req, res, next) => {
 
     res.status(201).json({
       status: 'success',
-      statusCode: 201,
       data: {
         ingredientId: result.id
       }
@@ -22,7 +21,6 @@ const getIngredients = async(req, res, next) => {
   try {
     res.status(200).json({
       status: 'success',
-      statusCode: 200,
       data: await ingredientsService.getIngredients()
     });
 
@@ -38,8 +36,7 @@ const editIngredientById = async(req, res, next) => {
 
     res.status(200).json({
       status: 'success',
-      statusCode: 200,
-      message: 'User updated successfully',
+      message: 'ingredient updated successfully',
       data: await ingredientsService.
       editIngredientById(id, payload)
     });
@@ -54,7 +51,6 @@ const deleteIngredientById = async(req, res, next) => {
 
     res.status(200).json({
       status: 'success',
-      statusCode: 200,
       message: 'ingredient deleted successfully',
       data: await ingredientsService.
       deleteIngredientById(id)
