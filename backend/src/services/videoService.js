@@ -12,7 +12,7 @@ const getVideoById = async (id) => {
   });
 
   if (!video) {
-    throw new Error('Video not found');
+    throw new NotFoundError('Video not found');
   }
 
   return video;
