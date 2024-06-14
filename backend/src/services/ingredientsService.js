@@ -10,7 +10,8 @@ const addIngredient = async (payload) => {
   const newIngredient = {
     id: `ingredient-${nanoid(16)}`,
     name: ingredient.name,
-    unit: ingredient.unit
+    unit: ingredient.unit,
+    quantity: ingredient.quantity
   };
 
 
@@ -28,6 +29,7 @@ const getIngredients = async() => {
       id: true,
       name: true,
       unit: true,
+      quantity: true,
       created_at: true,
       updated_at: true,
     }
@@ -37,6 +39,7 @@ const getIngredients = async() => {
     id: i.id,
     name: i.name,
     unit: i.unit,
+    quantity: i.quantity,
     createdAt: i.created_at,
     updatedAt: i.updated_at
   }));
@@ -63,7 +66,8 @@ const editIngredientById = async(id, payload) => {
     },
     data: {
       name: ingredientRequest.name,
-      unit: ingredientRequest.unit
+      unit: ingredientRequest.unit,
+      quantity: ingredient.quantity
     },
     select: {
       id: true,

@@ -28,9 +28,7 @@ const createCategory = async (payload) => {
   const newCategory = {
     id: `category-${nanoid(16)}`,
     name: payload.name,
-    description: payload.description,
-    created_at: payload.created_at,
-    update_at: payload.update_at,
+    descriptions: payload.descriptions,
   };
 
   return await prismaClient.category.create({

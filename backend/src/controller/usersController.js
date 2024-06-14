@@ -74,11 +74,7 @@ const editUserById = async (req, res, next) => {
 
 const editAvatar = async (req, res, next) => {
   try {
-    const payload = req.file;
-
-    if(!payload) {
-      throw new InvariantError('input kosong');
-    }
+    const payload = req.file ? `/uploads/${req.file.filename}` : new InvariantError('input kosong');
 
     const id = req.params.userId;
 
@@ -91,10 +87,7 @@ const editAvatar = async (req, res, next) => {
       oldAvatarFilename = avatarUrl.split('/').pop();
     }
 
-    const filename = payload.filename;
-    const profilePicturePath = `/uploads/${filename}`;
-
-    const profilePicture = await usersService.editAvatarUser(id, profilePicturePath);
+    const profilePicture = await usersService.editAvatarUser(id, payload);
 
     if (avatarExists) {
       deleteFile(oldAvatarFilename);

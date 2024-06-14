@@ -3,10 +3,10 @@ import categoryController from '../controller/categoryController.js';
 import { authMiddleware } from "../middleware/authMiddleware.js";
 
 const categoryRouter = new express.Router();
-categoryRouter.get('/category', categoryController.getAllCategory);
-categoryRouter.get('/category/:categoryId', categoryController.getCategoryById);
-categoryRouter.post('/category', categoryController.createCategory);
-categoryRouter.delete('/category/:categoryId', categoryController.deleteCategory);
-categoryRouter.put('/category/:categoryId', categoryController.updateCategory);
+categoryRouter.get('/categories', categoryController.getAllCategory);
+categoryRouter.get('/categories/:categoryId', categoryController.getCategoryById);
+categoryRouter.post('/categories', categoryController.createCategory);
+categoryRouter.delete('/categories/:categoryId', categoryController.deleteCategory);
+categoryRouter.put('/categories/:categoryId', categoryController.updateCategory);
 
 export default categoryRouter;

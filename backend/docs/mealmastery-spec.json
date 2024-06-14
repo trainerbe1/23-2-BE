@@ -94,14 +94,6 @@
         "get":{
           "parameters": [
             {
-              "name":"meal_mastery",
-              "in": "cookie",
-              "required": true,
-              "schema":{
-                "example": " eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InVzZXItRFNlYmZpbkVQcWc4b05VWEZSaE4iLCJpYXQiOjE3MTMxNTE1NTV9.RM6NKR7qb-p3WK5SQjiCiLZZcr-G1PDwm_yxEAkQxn8"
-              }
-            },
-            {
               "name": "userId",
               "required": true,
               "in": "path",
@@ -135,7 +127,9 @@
                           "username":{},
                           "email":{},
                           "gender":{},
-                          "profilePictureUrl":{},
+                          "profilePictureUrl":{
+                            "example":"/uploads/profilePicture-83485463925.png"
+                          },
                           "role":{},
                           "createdAt":{},
                           "updatedAt":{}
@@ -212,7 +206,7 @@
         }
       },
       "/users/{userId}/avatar":{
-        "put":{
+        "patch":{
           "security": [
             {
               "Authorization":[]
@@ -229,14 +223,6 @@
               "schema":{
                 "type": "string",
                 "example": "user-awenwefhubwer75t6"
-              }
-            },
-            {
-              "name":"meal_mastery",
-              "in": "cookie",
-              "required": true,
-              "schema":{
-                "example": " eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InVzZXItRFNlYmZpbkVQcWc4b05VWEZSaE4iLCJpYXQiOjE3MTMxNTE1NTV9.RM6NKR7qb-p3WK5SQjiCiLZZcr-G1PDwm_yxEAkQxn8"
               }
             }
           ],
@@ -527,7 +513,17 @@
             }
           }
         }
-      }
+      },
+      "/catagory":{},
+      "/category/categoryId":{},
+      "/ingredients":{},
+      "/ingredients/:ingredientId":{},
+      "/videos":{},
+      "/videos/:videoId":{},
+      "/recipes":{},
+      "/recipes/:recipeId":{},
+      "/favorites":{},
+      "/favorites/:favoriteId":{}
     },
     "components": {
       "schemas": {
