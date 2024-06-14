@@ -1,0 +1,7 @@
+#app {
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+.router-link-exact-active{
+    font-weight: bold;
+}
