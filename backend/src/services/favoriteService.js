@@ -21,7 +21,7 @@ const getFavoriteById = async (id) => {
   });
 
   if (!favorite) {
-    throw new Error('Favorite not found, id undefined');
+    throw new NotFoundError('Favorite not found, id undefined');
   }
 
   return favorite;
