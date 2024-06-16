@@ -3,7 +3,8 @@ import { NotFoundError } from "../exceptions/NotFoundError.js";
 import { nanoid } from 'nanoid';
 
 const getAllVideos = async () => {
-  return prismaClient.video.findMany();
+  const videos = await prismaClient.video.findMany();
+  return videos;
 };
 
 const getVideoById = async (id) => {
