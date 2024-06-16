@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node src/app.js",
+    "start:dev": "nodemon src/app.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --setupFiles -i",
     "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll --coverage --setupFiles -i",
     "lint": "npx eslint src/",
