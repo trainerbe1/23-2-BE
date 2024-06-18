@@ -6,7 +6,7 @@
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav>
           <b-nav-item-dropdown text="Recipes" right>
-            <b-dropdown-item href="/RecipeList">Recipe List</b-dropdown-item>
+            <b-dropdown-item @click="viewRecipeList">Recipe List</b-dropdown-item>
             <b-dropdown-item href="#/category">Category</b-dropdown-item>
           </b-nav-item-dropdown>
           <b-nav-item href="/MealPlanning">Meal</b-nav-item>
@@ -55,7 +55,13 @@ export default {
   computed: {
     ...mapState(["isAuthenticated", "user"]),
   },
+
   methods: {
+    viewRecipeList() {
+      if (this.$route.path !== '/recipe-list') {
+        this.$router.push({ name: 'RecipeListPage' });
+      }
+    },
     ...mapActions(["logout"]),
     handleLogout() {
       Swal.fire({
@@ -78,9 +84,7 @@ export default {
 };
 </script>
 
-
-
-  <style scoped>
+<style scoped>
 .navbar-brand {
   font-family: "Pacifico", cursive;
   font-size: 1.3rem;

@@ -1,5 +1,4 @@
 import categoryService from '../services/categoryService.js';
-import { generateAccessToken } from '../utils/tokenManager.js';
 
 const getAllCategory = async (req, res, next) => {
   try {

@@ -68,9 +68,12 @@ const getRecipe = async(recipeName, categoryName, page, limit) => {
         }
       },
       video:{
-        select: {
-          name: true,
-          link: true
+        include: {
+          VideoItem:{
+            select:{
+              link:true,
+            }
+          }
         }
       },
       favorites:{
@@ -94,8 +97,7 @@ const getRecipe = async(recipeName, categoryName, page, limit) => {
     ingredientData: r.ingredients,
     categoryName: r.category.name,
     videoName: r.video.name,
-    link: r.video.link,
-    favoriteCount: r.favorites.count,
+    link: r.video.VideoItem.link,
     createdAt: r.created_at,
     updatedAt: r.updated_at
   }));
@@ -122,9 +124,12 @@ const getRecipeById = async(id) => {
         }
       },
       video:{
-        select: {
-          name: true,
-          link: true
+        include: {
+          VideoItem:{
+            select:{
+              link:true,
+            }
+          }
         }
       }
     },
@@ -143,7 +148,7 @@ const getRecipeById = async(id) => {
     ingredients: recipe.ingredients,
     categoryName: recipe.category.name,
     videoName: recipe.video.name,
-    link: recipe.video.link,
+    link: recipe.video.VideoItem?.link,
     createdAt: recipe.created_at,
     updatedAt: recipe.updated_at
   };

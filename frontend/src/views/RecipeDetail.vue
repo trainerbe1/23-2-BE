@@ -1,123 +1,129 @@
 <template>
-    <div>
-      <h1>Recipe</h1>
+  <div class="about">
+    <AppNavbar />
+    <div class="container">
+      <h1 class="text-center my-4">{{ recipe.title }}</h1>
 
-      <!-- Header -->
-      
-      <!-- Search Bar -->
+      <!-- Display recipe image -->
       <div class="container my-4">
-        <div class="input-group">
-          <input type="text" class="form-control" placeholder="Search" />
-          <button class="btn btn-warning" type="button">Search</button>
+        <div class="d-flex flex-column justify-content-center align-items-center" style="height: auto ;">
+          <span v-if="loading" class="text-muted">Loading...</span>
+          <span v-else-if="error" class="text-danger">{{ error }}</span>
+          <img v-else :src="recipe.image" alt="Recipe Image" class="img-fluid mb-3 recipe-image" />
         </div>
       </div>
 
-      <!-- Product Image -->
+      <!-- Recipe Details -->
       <div class="container my-4">
-        <div class="bg-light d-flex flex-column justify-content-center align-items-center" style="height: 400px;">
-          <span v-if="loading" class="text-muted">Loading...</span>
-          <span v-else-if="error" class="text-danger">{{ error }}</span>
-          <img v-else :src="productImage" alt="Product Image" class="img-fluid mb-3" />
-          <div class="d-flex align-items-center mb-3">
-            <span class="fs-3 me-2">
-              <i class="fas fa-heart text-danger"></i> <!-- Icon love -->
-            </span>
-            <h2 class="text-center mb-0">{{ productName }}</h2>
-            <span class="fs-3 ms-2">
-              <i class="fas fa-star text-warning"></i> <!-- Icon favorite -->
-            </span>
+        <div class="row align-items-center mb-3">
+          <div class="col-md-9">
+            <h2 class="mb-0">{{ recipe.title }}</h2>
           </div>
-          <p class="text-center">{{ productDescription }}</p>
-          <h3 class="text-center mb-2">Ingredients:</h3>
-          <ul class="list-group text-center" v-if="productIngredients.length > 0">
-            <li class="list-group-item" v-for="(ingredient, index) in productIngredients" :key="index">{{ ingredient }}</li>
-          </ul>
-          <p v-else class="text-center">No ingredients available</p>
+          <div class="col-md-3 text-end">
+            <b-button size="md" variant="warning" class="mb-2" @click="toggleFavorite">
+              <b-icon :icon="isFavorite ? 'heart-fill' : 'heart'" aria-label="favorite" variant="danger"></b-icon>
+            </b-button>
+            <b-button size="md" variant="warning" class="mb-2 ms-2" style="margin-left: 5px;" @click="addToFavorites">
+              <b-icon icon="star" aria-label="favorite"></b-icon>
+            </b-button>
+          </div>
         </div>
+        <p class="description">{{ recipe.description }}</p>
+        <h3 class="mb-2">Ingredients:</h3>
+        <ul class="list-unstyled ingredients">
+          <li v-for="(ingredient, index) in recipe.ingredients" :key="index">• {{ ingredient }}</li>
+        </ul>
+        <h3 class="mb-2">Steps:</h3>
+        <ol class="steps">
+          <li v-for="(step, index) in recipe.steps" :key="index">{{step}}</li>
+        </ol>
       </div>
 
       <!-- Video Container -->
       <div class="container my-4">
-        <div class="embed-responsive embed-responsive-16by9" v-if="videoUrl">
-          <iframe class="embed-responsive-item" :src="videoUrl" allowfullscreen></iframe>
-        </div>
-        <p v-else class="text-center">No video available</p>
-      </div>
-
-      <!-- Other Products Container -->
-      <div class="container my-4">
-        <div class="row">
-          <div class="col-md-4" v-for="product in otherProducts" :key="product.id">
-            <div class="card mb-4">
-              <img :src="product.image" class="card-img-top" alt="Product Image">
-              <div class="card-body">
-                <h5 class="card-title">{{ product.name }}</h5>
-                <p class="card-text">{{ product.description }}</p>
-              </div>
-            </div>
-          </div>
+        <div class="embed-responsive embed-responsive-16by9">
+          <iframe v-if="recipe.video" class="embed-responsive-item" :src="recipe.video" allowfullscreen></iframe>
+          <p v-else class="text-center">No video available</p>
         </div>
       </div>
     </div>
+    <AppFooter />
+  </div>
+</template>
 
-    <!-- Footer -->
-  </template>
+<script>
+import { recipes } from '/src/mockData';
+import AppNavbar from '../components/AppNavbar.vue';
+import AppFooter from '../components/AppFooter.vue';
 
-  <script>
-  import axios from 'axios';
-  export default {
-    name: 'RecipeDetail',
-    data() {
-      return {
-        loading: true,
-        error: null,
-        productImage: '',
-        productName: '',
-        productDescription: '',
-        productIngredients: [],
-        videoUrl: '',
-        otherProducts: []
-      };
-    },
-    created() {
-      this.fetchProductData();
-      this.fetchVideoData();
-      this.fetchOtherProducts();
-    },
-    methods: {
-      async fetchProductData() {
-        try {
-          const response = await axios.get('http://localhost:3000/api/product'); // Ganti dengan URL API yang sesuai
-          this.productImage = response.data.image; // Asumsikan API mengembalikan URL gambar dalam field `image`
-          this.productName = response.data.name; // Asumsikan API mengembalikan nama produk dalam field `name`
-          this.productDescription = response.data.description; // Asumsikan API mengembalikan deskripsi produk dalam field `description`
-          this.productIngredients = response.data.ingredients; // Asumsikan API mengembalikan daftar bahan dalam array `ingredients`
-        } catch (error) {
-          this.error = 'Failed to load product data';
-        } finally {
-          this.loading = false;
-        }
-      },
-      async fetchVideoData() {
-        try {
-          const response = await axios.get('http://localhost:3000/api/video'); // Ganti dengan URL API yang sesuai
-          this.videoUrl = response.data.url; // Asumsikan API mengembalikan URL video dalam field `url`
-        } catch (error) {
-          this.error = 'Failed to load video data';
-        }
-      },
-      async fetchOtherProducts() {
-        try {
-          const response = await axios.get('https://api.example.com/products'); // Ganti dengan URL API yang sesuai
-          this.otherProducts = response.data.slice(0, 3); // Asumsikan API mengembalikan daftar produk dalam array `data`, dan kita ambil 3 produk pertama
-        } catch (error) {
-          this.error = 'Failed to load other products';
-        }
+export default {
+  name: 'RecipeDetail',
+  components: { AppNavbar, AppFooter },
+  data() {
+    return {
+      loading: true,
+      error: null,
+      recipe: {},
+      isFavorite: false // New state to track if recipe is favorite
+    };
+  },
+  created() {
+    // Fetch recipe details based on route params
+    this.fetchRecipeDetails();
+  },
+  methods: {
+    fetchRecipeDetails() {
+      const recipeId = this.$route.params.id;
+      const recipe = recipes.find((recipe) => recipe.id == recipeId);
+      if (recipe) {
+        this.recipe = recipe;
+        this.loading = false;
+      } else {
+        this.error = 'Recipe not found';
+        this.loading = false;
       }
     },
-  };
-  </script>
+    toggleFavorite() {
+      this.isFavorite = !this.isFavorite; // Toggle favorite status
+    },
+    addToFavorites() {
+      // Implement logic to add to favorites
+      alert(`Added ${this.recipe.title} to favorites`);
+    }
+  }
+};
+</script>
 
-<style>
+<style scoped>
+.about {
 
+  align-items: center;
+  justify-content: center;
+}
+.img-fluid {
+  max-width: 100%;
+  height: auto;
+}
+.container {
+  max-width: 800px;
+}
+.description {
+  text-align: left;
+  margin-bottom: 1rem;
+}
+.ingredients {
+  text-align: left;
+  list-style-type: none;
+  padding: 0;
+}
+.ingredients li::before {
+  content: '';
+  color: black;
+}
+.recipe-image {
+  width: 720px;
+  height: auto;
+  object-fit: cover;
+  border-radius: 10px;
+}
 </style>

@@ -11,10 +11,12 @@
     "axios": "^1.7.2",
     "bootstrap-vue": "^2.23.1",
     "core-js": "^3.8.3",
-    "sweetalert2": "^11.11.1",
+    "sweetalert2": "^11.6.13",
     "vue": "^2.6.14",
     "vue-router": "^3.5.1",
-    "vue-toast-notification": "^3.1.2",
+
+    "vue-toast-notification": "^0.5.0",
+
     "vuex": "^3.6.2"
   },
   "devDependencies": {
@@ -24,7 +26,7 @@
     "@vue/cli-plugin-eslint": "~5.0.0",
     "@vue/cli-plugin-router": "^5.0.8",
     "@vue/cli-plugin-vuex": "^5.0.8",
-    "@vue/cli-service": "~5.0.0",
+    "@vue/cli-service": "^5.0.8",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.0.3",
     "vue-template-compiler": "^2.6.14"
