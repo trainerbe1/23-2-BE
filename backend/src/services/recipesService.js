@@ -17,9 +17,7 @@ const addRecipe = async (payload, url) => {
       recipe_picture: url,
       category_id: recipe.categoryId,
       video_id: recipe.videoId,
-      ingredients: {
-        connect: recipe.ingredientId.map(id => ({id}))
-      }
+      ingredient_id: recipe.ingredientId
     },
     select: {
       id: true,
@@ -76,8 +74,10 @@ const getRecipe = async(recipeName, categoryName, page, limit) => {
           }
         }
       },
-      favorites:{
-        count: true
+      _count:{
+        select: {
+          favorites: true
+        }
       }
     },
     orderBy:{
@@ -94,10 +94,11 @@ const getRecipe = async(recipeName, categoryName, page, limit) => {
     cuisine: r.cuisine,
     instructions: r.instructions,
     recipePictureUrl: r.recipe_picture,
-    ingredientData: r.ingredients,
+    ingredients: r.ingredients,
     categoryName: r.category.name,
     videoName: r.video.name,
-    link: r.video.VideoItem.link,
+    links: r.video.VideoItem.map(linkItem => linkItem.link),
+    favoriteCount: r._count.favorites,
     createdAt: r.created_at,
     updatedAt: r.updated_at
   }));
@@ -148,7 +149,7 @@ const getRecipeById = async(id) => {
     ingredients: recipe.ingredients,
     categoryName: recipe.category.name,
     videoName: recipe.video.name,
-    link: recipe.video.VideoItem?.link,
+    link: recipe.video.VideoItem.map(item=>item.link),
     createdAt: recipe.created_at,
     updatedAt: recipe.updated_at
   };

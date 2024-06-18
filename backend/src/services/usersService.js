@@ -6,6 +6,7 @@ import { AuthenticationError } from "../exceptions/AuthenticationError.js";
 import { NotFoundError } from "../exceptions/NotFoundError.js";
 import bcrypt from 'bcrypt';
 import {nanoid} from 'nanoid';
+import { AuthorizationError } from "../exceptions/AuthorizationError.js";
 
 const register = async (payload) => {
   const user = validate(registerUserValidator, payload);
@@ -31,10 +32,12 @@ const register = async (payload) => {
   };
 
 
-  return prismaClient.user.create({
+  return await prismaClient.user.create({
     data: newUser,
     select: {
       id: true,
+      username:true,
+      role:true
     }
   });
 };
@@ -65,7 +68,7 @@ const login = async (payload) => {
     throw new AuthenticationError('Kredensial yang diberikan salah');
   }
 
-  return {userId: user.id, username: user.username, role: user.role};
+  return {id: user.id, username: user.username, role: user.role};
 };
 
 
@@ -270,4 +273,23 @@ const deleteUser = async(id) => {
   });
 };
 
-export  default {register, login, getUserById, editUserById, changePassword,editAvatarUser, changeEmail, deleteUser};
+const verifyOwner = async(id, userId) => {
+  const owner = await prismaClient.user.findUnique({
+    where: {
+      id: id,
+    },
+    select: {
+      id: true
+    }
+  });
+
+  if(!owner) {
+    throw new NotFoundError('Id not found');
+  }
+
+  if(owner.id !== userId) {
+    throw new AuthorizationError('restricted resource');
+  }
+};
+
+export  default {register, login, getUserById, editUserById, changePassword,editAvatarUser, changeEmail, deleteUser, verifyOwner};

@@ -8,12 +8,12 @@ const register = async (req, res, next) => {
     const payload = req.body;
     const result = await usersService.register(payload);
 
+    const accessToken = generateAccessToken({id: result.userId, role: result.role});
 
-    res.status(201).json({
+    res.cookie('meal_mastery', accessToken, { httpOnly: true, secure: false }).status(201).json({
       status: 'success',
-      data: {
-        userId: result.id
-      }
+      message: 'login successfully',
+      data: result
     });
 
   } catch (e) {
@@ -28,7 +28,7 @@ const login = async (req, res, next) => {
 
     const accessToken = generateAccessToken({id: result.userId, role: result.role});
 
-    res.cookie('meal_mastery', accessToken, { httpOnly: true }).status(201).json({
+    res.cookie('meal_mastery', accessToken, { httpOnly: true, secure: false }).status(201).json({
       status: 'success',
       message: 'login successfully',
       data: result
@@ -42,6 +42,9 @@ const login = async (req, res, next) => {
 const getUserById = async (req, res, next) => {
   try {
     const id = req.params.userId;
+    const userId = req.userId;
+
+    await usersService.verifyOwner(id, userId);
     res.status(200).json({
       status: 'success',
       data: await usersService.getUserById(id)
@@ -56,6 +59,9 @@ const editUserById = async (req, res, next) => {
   try {
     const payload = req.body;
     const id = req.params.userId;
+    const userId = req.userId;
+
+    await usersService.verifyOwner(id, userId);
 
     res.status(200).json({
       status: 'success',
@@ -105,6 +111,10 @@ const editPasswordById = async(req, res, next) => {
     const id = req.params.userId;
     const newPassword = req.body;
 
+    const userId = req.userId;
+
+    await usersService.verifyOwner(id, userId);
+
     res.status(200).json({
       status: 'success',
       message: 'update password successfully',
@@ -119,6 +129,10 @@ const editEmail = async(req, res, next) => {
   try {
     const id = req.params.userId;
     const payload = req.body;
+
+    const userId = req.userId;
+
+    await usersService.verifyOwner(id, userId);
 
     res.status(200).json({
       status: 'success',

@@ -62,10 +62,10 @@ model Category {
 }
 
 model Video {
-  id         String   @id @map("_id") @db.String()
-  name       String   @db.String()
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt()
+  id         String      @id @map("_id") @db.String()
+  name       String      @db.String()
+  created_at DateTime    @default(now())
+  updated_at DateTime    @updatedAt()
   recipe     Recipe?
   VideoItem  VideoItem[]
 
@@ -73,11 +73,11 @@ model Video {
 }
 
 model VideoItem {
-  id        String  @id @map("_id") @db.String()
-  video_id  String  @unique @db.String()
-  link      String  @db.String()
-  
-  video     Video   @relation(fields: [video_id], references: [id])
+  id       String @id @map("_id") @db.String()
+  video_id String @db.String()
+  link     String @db.String()
+
+  video Video @relation(fields: [video_id], references: [id])
 
   @@map("videoItems")
 }
