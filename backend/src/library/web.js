@@ -14,6 +14,8 @@ import videoItemRouter from "../routes/videoItemsRoutes.js";
 import recipesRouter from "../routes/recipesRoutes.js";
 import favoriteRouter from "../routes/favoriteRoutes.js";
 import groceriesRouter from "../routes/groceriesRoutes.js";
+import mealPlansRouter from "../routes/mealPlansRoutes.js";
+import mealPlanItemsRouter from "../routes/mealPlanItemsRoutes.js";
 
 export const web = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -33,6 +35,8 @@ web.use('/api/v1', videoItemRouter);
 web.use('/api/v1', recipesRouter);
 web.use('/api/v1', favoriteRouter);
 web.use('/api/v1', groceriesRouter);
+web.use('/api/v1', mealPlansRouter);
+web.use('/api/v1', mealPlanItemsRouter);
 
 web.use(morganMiddleware);
 web.use(errorMiddleware);
