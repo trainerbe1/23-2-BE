@@ -76,15 +76,21 @@ const editIngredientById = async(id, payload) => {
 };
 
 const deleteIngredientById = async(id) => {
-  const user = await prismaClient.ingredient.delete({
+  const ingredient = await prismaClient.ingredient.findUnique({
     where:{
       id: id
     }
   });
 
-  if(!user) {
+  if(!ingredient) {
     throw new NotFoundError('id not found');
   }
+
+  return await prismaClient.ingredient.delete({
+    where:{
+      id: id
+    }
+  });
 };
 
 export default { getIngredients, addIngredient, editIngredientById, deleteIngredientById};

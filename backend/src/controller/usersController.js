@@ -11,7 +11,6 @@ const register = async (req, res, next) => {
 
     res.status(201).json({
       status: 'success',
-      statusCode: 201,
       data: {
         userId: result.id
       }
@@ -31,7 +30,6 @@ const login = async (req, res, next) => {
 
     res.cookie('meal_mastery', accessToken, { httpOnly: true }).status(201).json({
       status: 'success',
-      statusCode: 201,
       message: 'login successfully',
       data: result
     });
@@ -46,7 +44,6 @@ const getUserById = async (req, res, next) => {
     const id = req.params.userId;
     res.status(200).json({
       status: 'success',
-      statusCode: 200,
       data: await usersService.getUserById(id)
     });
 
@@ -62,7 +59,6 @@ const editUserById = async (req, res, next) => {
 
     res.status(200).json({
       status: 'success',
-      statusCode: 200,
       message: 'User updated successfully',
       data: await usersService.editUserById(payload, id)
     });
@@ -95,7 +91,6 @@ const editAvatar = async (req, res, next) => {
 
     res.status(200).json({
       status: 'success',
-      statusCode: 200,
       message: 'User updated successfully',
       data: profilePicture,
     });
@@ -112,7 +107,6 @@ const editPasswordById = async(req, res, next) => {
 
     res.status(200).json({
       status: 'success',
-      statusCode: 200,
       message: 'update password successfully',
       data: await usersService.changePassword(newPassword, id)
     });
@@ -128,7 +122,6 @@ const editEmail = async(req, res, next) => {
 
     res.status(200).json({
       status: 'success',
-      statusCode: 200,
       message: 'email update successfully',
       data: await usersService.changeEmail(payload, id)
     });
@@ -142,7 +135,6 @@ const deleteUser = async(req, res, next) => {
     const id = req.params.userId;
     res.status(200).json({
       status: 'success',
-      statusCode: 200,
       data: await usersService.deleteUser(id)
     });
 
@@ -158,7 +150,6 @@ const logout =  (req, res, next) => {
       httpOnly: true, 
     }).status(200).json({
       status: 'success',
-      statusCode: 200,
       message: 'logout successfully'
     });
 

@@ -15,17 +15,16 @@ export const loginUserValidator = Joi.object({
 
 
 export const patchUserValidator = Joi.object({
-  username: Joi.string().min(3).max(100).required(),
-  gender: Joi.boolean().required(),
-  password: Joi.string().min(8).required(),
+  username: Joi.string().min(3).max(100).optional(),
+  gender: Joi.boolean().optional(),
 });
 
-export const putUserChangePasswordValidator = Joi.object({
+export const patchUserChangePasswordValidator = Joi.object({
   oldPassword: Joi.string().min(8).required(),
   newPassword: Joi.string().min(8).required()
 });
 
-export const putUserChangeEmailValidator = Joi.object({
+export const patchUserChangeEmailValidator = Joi.object({
   oldEmail: Joi.string().email().required(),
   newEmail: Joi.string().email().required()
 });

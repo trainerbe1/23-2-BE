@@ -72,6 +72,9 @@ const getRecipe = async(recipeName, categoryName, page, limit) => {
           name: true,
           link: true
         }
+      },
+      favorites:{
+        count: true
       }
     },
     orderBy:{
@@ -88,10 +91,11 @@ const getRecipe = async(recipeName, categoryName, page, limit) => {
     cuisine: r.cuisine,
     instructions: r.instructions,
     recipePictureUrl: r.recipe_picture,
-    ingredients: r.ingredients,
+    ingredientData: r.ingredients,
     categoryName: r.category.name,
     videoName: r.video.name,
     link: r.video.link,
+    favoriteCount: r.favorites.count,
     createdAt: r.created_at,
     updatedAt: r.updated_at
   }));

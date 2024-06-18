@@ -10,11 +10,15 @@
     },
     
     "servers": [
-      {"url": "http://localhost:5000/api/v1", "description": "development"}
+      {"url": "http://127.0.0.1:5000/api/v1", "description": "development"},{
+        "url": "http://localhost:5000/api/v1", "description": "development-lhost"
+      }
     ],
     "paths": {
-      "/users":{
+      "/users/register":{
         "post":{
+          "description": "register user",
+          "summary": "register user",
           "tags": ["users"],
           "requestBody":{
             "required": true,
@@ -50,9 +54,6 @@
                     "properties": {
                       "status":{
                         "example": "success"
-                      },
-                      "statusCode":{
-                        "example": 201
                       },
                       "data":{
                         "type": "object",
@@ -92,19 +93,20 @@
       },
       "/users/:userId":{
         "get":{
+          "summary": "get specified user by id",
           "parameters": [
             {
               "name": "userId",
               "required": true,
               "in": "path",
               "schema":{
-                "example":"user-cheiucegijfytd"
+                "example":"user-OWBp9E5HPuLdl2eE"
               }
             }
           ],
           "security": [
             {
-              "jwt_meal":[]
+              "cookieAuth":[]
             }
           ],
           "tags": ["users"],
@@ -123,16 +125,30 @@
                       "data":{
                         "type": "object",
                         "properties": {
-                          "id":{},
-                          "username":{},
-                          "email":{},
-                          "gender":{},
+                          "id":{
+                            "example":"user-OWBp9E5HPuLdl2eE"
+                          },
+                          "username":{
+                            "example":"MISNO SUGIANTO"
+                          },
+                          "email":{
+                            "example":"user@mail.com"
+                          },
+                          "gender":{
+                            "example":true
+                          },
                           "profilePictureUrl":{
                             "example":"/uploads/profilePicture-83485463925.png"
                           },
-                          "role":{},
-                          "createdAt":{},
-                          "updatedAt":{}
+                          "role":{
+                            "example":"USER"
+                          },
+                          "createdAt":{
+                            "example":"2024-06-14T19:23:48.169Z"
+                          },
+                          "updatedAt":{
+                            "example":"2024-06-15T19:23:48.169Z"
+                          }
                         }
                       }
                     }
@@ -184,17 +200,11 @@
         },
         "patch":{
           "tags": ["users"],
-          "requestBody":{
-            "content": {}
-          },
-          "responses": {
-            "200":{
-              "description": ""
+          "security": [
+            {
+              "cookieAuth":[]
             }
-          }
-        },
-        "put":{
-          "tags": ["users"],
+          ],
           "requestBody":{
             "content": {}
           },
@@ -318,7 +328,7 @@
         }
       },
       "/users/{userId}/change-password":{
-        "put":{
+        "patch":{
           "tags": ["users"],
           "security": [
             {
@@ -438,6 +448,12 @@
           }
         }
       },
+      "/users/{userId}/change-email":{},
+      "/users/{userId}/delete-user":{
+        "patch":{
+          "tags": ["admin"]
+        }
+      },
       "/users/login":{
         "post":{
           "tags": ["auth"],
@@ -449,10 +465,10 @@
                   "type": "object",
                   "properties": {
                     "email":{
-                      "example": "example@mail.com"
+                      "example": "user@mail.com"
                     },
                     "password":{
-                      "example": "newPassword"
+                      "example": "newUserPassword"
                     }
                   }
                 }
@@ -461,7 +477,7 @@
           },
           "responses": {
             "201":{
-              "description": "register users",
+              "description": "login user",
               "content": {
                 "application/json":{
                   "schema":{
@@ -470,8 +486,22 @@
                       "status":{
                         "example": "success"
                       },
-                      "statusCode":{
-                        "example": 201
+                      "message":{
+                        "example": "login successfully"
+                      },
+                      "data":{
+                        "type": "object",
+                        "properties": {
+                          "userId":{
+                            "example":"user-OWBp9E5HPuLdl2eE"
+                          },
+                          "username":{
+                            "example":"MISNO SUGIANTO"
+                          },
+                          "role":{
+                            "example":"USER"
+                          }
+                        }
                       }
                     }
                   }
@@ -514,16 +544,42 @@
           }
         }
       },
-      "/catagory":{},
-      "/category/categoryId":{},
-      "/ingredients":{},
-      "/ingredients/:ingredientId":{},
+      "/category":{},
+      "/category/{categoryId}":{},
+      "/ingredients":{
+        "post":{
+          "tags": ["admin"]
+        }
+      },
+      "/ingredients/{ingredientId}":{
+        "get":{},
+        "patch":{
+          "tags": ["admin"]
+        },
+        "delete":{
+          "tags": ["admin"]
+        }
+      },
       "/videos":{},
-      "/videos/:videoId":{},
-      "/recipes":{},
-      "/recipes/:recipeId":{},
+      "/videos/{videoId}":{},
+      "/recipes":{
+        "post":{
+          "tags": ["admin"]
+        }
+      },
+      "/recipes/{recipeId}":{
+        "get":{},
+        "patch":{
+          "tags": ["admin"]
+        },
+        "delete":{
+          "tags": ["admin"]
+        }
+      },
       "/favorites":{},
-      "/favorites/:favoriteId":{}
+      "/favorites/{favoriteId}":{},
+      "/groceries":{},
+      "/groceries/{groceryId}":{}
     },
     "components": {
       "schemas": {
@@ -532,9 +588,6 @@
           "properties": {
             "status":{
               "example":"fail"
-            },
-            "statusCode":{
-              "example":400
             },
             "message":{
               "example": "invalid paylaod"
@@ -547,9 +600,6 @@
             "status":{
               "example":"fail"
             },
-            "statusCode":{
-              "example":401
-            },
             "message":{
               "example": "unauthorized"
             }
@@ -560,9 +610,6 @@
           "properties": {
             "status":{
               "example":"fail"
-            },
-            "statusCode":{
-              "example":403
             },
             "message":{
               "example": "forbidden"
@@ -575,9 +622,6 @@
             "status":{
               "example":"fail"
             },
-            "statusCode":{
-              "example":404
-            },
             "message":{
               "example": "id not found"
             }
@@ -589,9 +633,6 @@
             "status":{
               "example":"fail"
             },
-            "statusCode":{
-              "example":500
-            },
             "message":{
               "example": "internal server error"
             }
@@ -599,9 +640,10 @@
         }
       },
       "securitySchemes": {
-        "jwt_meal":{
-          "type": "http",
-          "scheme": "bearer"
+        "cookieAuth":{
+          "type": "apiKey",
+          "in": "cookie",
+          "name": "meal_mastery"
         }
       }
     }
