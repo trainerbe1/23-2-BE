@@ -1,4 +1,4 @@
-import { loginUserValidator, patchUserValidator, putUserChangeEmailValidator, putUserChangePasswordValidator, registerUserValidator } from "../validator/usersValidator.js";
+import { loginUserValidator, patchUserChangeEmailValidator, patchUserChangePasswordValidator, patchUserValidator, registerUserValidator } from "../validator/usersValidator.js";
 import { validate } from "../validator/index.js";
 import {prismaClient} from '../library/database.js';
 import { InvariantError } from "../exceptions/InvariantError.js";
@@ -6,6 +6,7 @@ import { AuthenticationError } from "../exceptions/AuthenticationError.js";
 import { NotFoundError } from "../exceptions/NotFoundError.js";
 import bcrypt from 'bcrypt';
 import {nanoid} from 'nanoid';
+import { AuthorizationError } from "../exceptions/AuthorizationError.js";
 
 const register = async (payload) => {
   const user = validate(registerUserValidator, payload);
@@ -31,10 +32,12 @@ const register = async (payload) => {
   };
 
 
-  return prismaClient.user.create({
+  return await prismaClient.user.create({
     data: newUser,
     select: {
       id: true,
+      username:true,
+      role:true
     }
   });
 };
@@ -49,6 +52,7 @@ const login = async (payload) => {
     select: {
       id: true,
       email: true,
+      username: true,
       password: true,
       role: true
     }
@@ -64,7 +68,7 @@ const login = async (payload) => {
     throw new AuthenticationError('Kredensial yang diberikan salah');
   }
 
-  return {userId: user.id, role: user.role};
+  return {id: user.id, username: user.username, role: user.role};
 };
 
 
@@ -162,7 +166,7 @@ const editAvatarUser = async(id, payload) => {
 };
 
 const changePassword = async(payload, id) => {
-  const passwordRequest = validate(putUserChangePasswordValidator, payload);
+  const passwordRequest = validate(patchUserChangePasswordValidator, payload);
 
   const user = await prismaClient.user.findUnique({
     where: {
@@ -197,14 +201,13 @@ const changePassword = async(payload, id) => {
     data: data,
     select: {
       id: true,
-      password: true
     }
   });
 };
 
 
 const changeEmail = async(payload, id) => {
-  const emailRequest = validate(putUserChangeEmailValidator, payload);
+  const emailRequest = validate(patchUserChangeEmailValidator, payload);
 
   const user = await prismaClient.user.findUnique({
     where: {
@@ -250,7 +253,17 @@ const changeEmail = async(payload, id) => {
 };
 
 const deleteUser = async(id) => {
-  const user = await prismaClient.user.update({
+  const user = await prismaClient.user.findUnique({
+    where:{
+      id: id
+    }
+  });
+
+  if(!user) {
+    throw new NotFoundError('id not found');
+  }
+
+  return await prismaClient.user.update({
     where:{
       id: id
     },
@@ -258,10 +271,25 @@ const deleteUser = async(id) => {
       is_delete: true
     }
   });
+};
 
-  if(!user) {
-    throw new NotFoundError('id not found');
+const verifyOwner = async(id, userId) => {
+  const owner = await prismaClient.user.findUnique({
+    where: {
+      id: id,
+    },
+    select: {
+      id: true
+    }
+  });
+
+  if(!owner) {
+    throw new NotFoundError('Id not found');
+  }
+
+  if(owner.id !== userId) {
+    throw new AuthorizationError('restricted resource');
   }
 };
 
-export  default {register, login, getUserById, editUserById, changePassword,editAvatarUser, changeEmail, deleteUser};
+export  default {register, login, getUserById, editUserById, changePassword,editAvatarUser, changeEmail, deleteUser, verifyOwner};
