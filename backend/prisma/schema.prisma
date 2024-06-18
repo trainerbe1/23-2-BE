@@ -26,8 +26,20 @@ model User {
   updated_at      DateTime   @updatedAt()
   favorites       Favorite[]
   groceries       Grocery[]
+  mealPlans       MealPlan[]
 
   @@map("users")
+}
+
+model Admin {
+  id              String     @id @map("_id") @db.String()
+  username        String     @db.String()
+  email           String     @unique @db.String()
+  password        String     @db.String()
+  created_at      DateTime   @default(now())
+  updated_at      DateTime   @updatedAt()
+  
+  @@map("admin")
 }
 
 enum Role {
@@ -74,7 +86,7 @@ model Video {
 
 model VideoItem {
   id        String  @id @map("_id") @db.String()
-  video_id  String  @unique @db.String()
+  video_id  String  @db.String()
   link      String  @db.String()
   
   video     Video   @relation(fields: [video_id], references: [id])
@@ -96,10 +108,11 @@ model Recipe {
   updated_at     DateTime   @updatedAt()
   favorites      Favorite[]
 
-  ingredients Ingredient[] @relation(fields: [ingredient_id], references: [id])
-  category    Category     @relation(fields: [category_id], references: [id])
-  video       Video        @relation(fields: [video_id], references: [id])
-  groceries   Grocery[]
+  ingredients   Ingredient[] @relation(fields: [ingredient_id], references: [id])
+  category      Category     @relation(fields: [category_id], references: [id])
+  video         Video        @relation(fields: [video_id], references: [id])
+  groceries     Grocery[]
+  mealPlanItems MealPlanItem[]
 
   @@map("recipes")
 }
@@ -128,4 +141,29 @@ model Grocery {
   recipe Recipe @relation(fields: [recipe_id], references: [id])
 
   @@map("groceries")
+}
+
+model MealPlan {
+  id            String   @id @map("_id") @db.String()
+  user_id       String   @db.String()
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt()
+  mealPlanItems MealPlanItem[] 
+
+  user   User   @relation(fields: [user_id], references: [id])
+
+  @@map("mealPlans")
+}
+
+model MealPlanItem {
+  id          String   @id @map("_id") @db.String()
+  mealPlan_id String   @db.String()
+  recipe_id   String   @db.String()
+  meal_type   String   @db.String()
+  day_of_week String   @db.String()
+
+  recipe    Recipe   @relation(fields: [recipe_id], references: [id])
+  mealPlan  MealPlan @relation(fields: [mealPlan_id], references: [id])
+
+  @@map("mealPlanItems")
 }
