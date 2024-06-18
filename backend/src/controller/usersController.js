@@ -8,13 +8,12 @@ const register = async (req, res, next) => {
     const payload = req.body;
     const result = await usersService.register(payload);
 
+    const accessToken = generateAccessToken({id: result.userId, role: result.role});
 
-    res.status(201).json({
+    res.cookie('meal_mastery', accessToken, { httpOnly: true, secure: false }).status(201).json({
       status: 'success',
-      statusCode: 201,
-      data: {
-        userId: result.id
-      }
+      message: 'login successfully',
+      data: result
     });
 
   } catch (e) {
@@ -29,9 +28,8 @@ const login = async (req, res, next) => {
 
     const accessToken = generateAccessToken({id: result.userId, role: result.role});
 
-    res.cookie('meal_mastery', accessToken, { httpOnly: true }).status(201).json({
+    res.cookie('meal_mastery', accessToken, { httpOnly: true, secure: false }).status(201).json({
       status: 'success',
-      statusCode: 201,
       message: 'login successfully',
       data: result
     });
@@ -44,9 +42,11 @@ const login = async (req, res, next) => {
 const getUserById = async (req, res, next) => {
   try {
     const id = req.params.userId;
+    const userId = req.userId;
+
+    await usersService.verifyOwner(id, userId);
     res.status(200).json({
       status: 'success',
-      statusCode: 200,
       data: await usersService.getUserById(id)
     });
 
@@ -59,10 +59,12 @@ const editUserById = async (req, res, next) => {
   try {
     const payload = req.body;
     const id = req.params.userId;
+    const userId = req.userId;
+
+    await usersService.verifyOwner(id, userId);
 
     res.status(200).json({
       status: 'success',
-      statusCode: 200,
       message: 'User updated successfully',
       data: await usersService.editUserById(payload, id)
     });
@@ -95,7 +97,6 @@ const editAvatar = async (req, res, next) => {
 
     res.status(200).json({
       status: 'success',
-      statusCode: 200,
       message: 'User updated successfully',
       data: profilePicture,
     });
@@ -110,9 +111,12 @@ const editPasswordById = async(req, res, next) => {
     const id = req.params.userId;
     const newPassword = req.body;
 
+    const userId = req.userId;
+
+    await usersService.verifyOwner(id, userId);
+
     res.status(200).json({
       status: 'success',
-      statusCode: 200,
       message: 'update password successfully',
       data: await usersService.changePassword(newPassword, id)
     });
@@ -126,9 +130,12 @@ const editEmail = async(req, res, next) => {
     const id = req.params.userId;
     const payload = req.body;
 
+    const userId = req.userId;
+
+    await usersService.verifyOwner(id, userId);
+
     res.status(200).json({
       status: 'success',
-      statusCode: 200,
       message: 'email update successfully',
       data: await usersService.changeEmail(payload, id)
     });
@@ -142,7 +149,6 @@ const deleteUser = async(req, res, next) => {
     const id = req.params.userId;
     res.status(200).json({
       status: 'success',
-      statusCode: 200,
       data: await usersService.deleteUser(id)
     });
 
@@ -158,7 +164,6 @@ const logout =  (req, res, next) => {
       httpOnly: true, 
     }).status(200).json({
       status: 'success',
-      statusCode: 200,
       message: 'logout successfully'
     });
 

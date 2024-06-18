@@ -10,11 +10,15 @@
     },
     
     "servers": [
-      {"url": "http://localhost:5000/api/v1", "description": "development"}
+      {"url": "http://127.0.0.1:5000/api/v1", "description": "development"},{
+        "url": "http://localhost:5000/api/v1", "description": "development-lhost"
+      }
     ],
     "paths": {
-      "/users":{
+      "/users/register":{
         "post":{
+          "description": "register user",
+          "summary": "register user",
           "tags": ["users"],
           "requestBody":{
             "required": true,
@@ -51,14 +55,17 @@
                       "status":{
                         "example": "success"
                       },
-                      "statusCode":{
-                        "example": 201
-                      },
                       "data":{
                         "type": "object",
                         "properties": {
-                          "userId":{
+                          "id":{
                             "example": "user-fheruwfhre"
+                          },
+                          "username":{
+                            "example": "newUsername"
+                          },
+                          "role":{
+                            "example": "USER"
                           }
                         }
                       }
@@ -90,21 +97,22 @@
           }
         }
       },
-      "/users/:userId":{
+      "/users/{userId}":{
         "get":{
+          "summary": "get specified user by id",
           "parameters": [
             {
               "name": "userId",
               "required": true,
               "in": "path",
               "schema":{
-                "example":"user-cheiucegijfytd"
+                "example":"user-OWBp9E5HPuLdl2eE"
               }
             }
           ],
           "security": [
             {
-              "jwt_meal":[]
+              "cookieAuth":[]
             }
           ],
           "tags": ["users"],
@@ -117,22 +125,33 @@
                     "type": "object",
                     "properties": {
                       "status":{},
-                      "statusCode":{
-                        "example":200
-                      },
                       "data":{
                         "type": "object",
                         "properties": {
-                          "id":{},
-                          "username":{},
-                          "email":{},
-                          "gender":{},
+                          "id":{
+                            "example":"user-OWBp9E5HPuLdl2eE"
+                          },
+                          "username":{
+                            "example":"MISNO SUGIANTO"
+                          },
+                          "email":{
+                            "example":"user@mail.com"
+                          },
+                          "gender":{
+                            "example":true
+                          },
                           "profilePictureUrl":{
                             "example":"/uploads/profilePicture-83485463925.png"
                           },
-                          "role":{},
-                          "createdAt":{},
-                          "updatedAt":{}
+                          "role":{
+                            "example":"USER"
+                          },
+                          "createdAt":{
+                            "example":"2024-06-14T19:23:48.169Z"
+                          },
+                          "updatedAt":{
+                            "example":"2024-06-15T19:23:48.169Z"
+                          }
                         }
                       }
                     }
@@ -184,23 +203,102 @@
         },
         "patch":{
           "tags": ["users"],
-          "requestBody":{
-            "content": {}
-          },
-          "responses": {
-            "200":{
-              "description": ""
+          "security": [
+            {
+              "cookieAuth":[]
             }
-          }
-        },
-        "put":{
-          "tags": ["users"],
+          ],
+          "parameters": [
+            {
+              "name": "userId",
+              "required": true,
+              "in": "path",
+              "schema":{
+                "example":"user-OWBp9E5HPuLdl2eE"
+              }
+            }
+          ],
           "requestBody":{
-            "content": {}
+            "required": true,
+            "content": {
+              "application/json":{
+                "schema":{
+                  "type": "object",
+                  "properties": {
+                    "username":{
+                      "example": "new Username"
+                    },
+                    "gender":{
+                      "example": false
+                    }
+                  }
+                }
+              }
+            }
           },
           "responses": {
             "200":{
-              "description": ""
+              "description": "get user specified",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "type": "object",
+                    "properties": {
+                      "status":{
+                        "example": "success"
+                      },
+                      "data":{
+                        "type": "object",
+                        "properties": {
+                          "id":{
+                            "example":"user-OWBp9E5HPuLdl2eE"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401":{
+              "description": "unauthorized",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/unauthorized"
+                  }
+                }
+              }
+            },
+            "403":{
+              "description": "unauthorized",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/forbidden"
+                  }
+                }
+              }
+            },
+            "404":{
+              "description": "id not found",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/notFound"
+                  }
+                }
+              }
+            },
+            "500":{
+              "description": "oops, something error",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/internalServerError"
+                  }
+                }
+              }
             }
           }
         }
@@ -209,7 +307,7 @@
         "patch":{
           "security": [
             {
-              "Authorization":[]
+              "cookieAuth":[]
             }
           ],
           "tags": ["users"],
@@ -222,7 +320,7 @@
               "required": true ,
               "schema":{
                 "type": "string",
-                "example": "user-awenwefhubwer75t6"
+                "example": "user-_VeKiMB0lRMc76lu"
               }
             }
           ],
@@ -231,13 +329,10 @@
             "content": {
               "multipart/form-data":{
                 "schema":{
-                  "type": "string",
-                  "format": "base64"
-                },
-                "encoding": {
-                  "profilePicture":{
-                    "contentType": "image/png, image/jpeg,"
-                    
+                  "properties": {
+                    "profilePicture":{
+                      "format": "base64"
+                    }
                   }
                 }
               }
@@ -245,7 +340,108 @@
           },
           "responses": {
             "200":{
-              "description": "update user by id",
+              "description": "update user avatar by id",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "properties": {
+                      "id":{
+                        "example":"user-_VeKiMB0lRMc76lu"
+                      },
+                      "profilePictureUrl":{
+                        "example":"/uploads/profilePicture-456765354.png"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400":{
+              "description": "invalid payload",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/badRequest"
+                  }
+                }
+              }
+            },
+            "401":{
+              "description": "unauthorized",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/unauthorized"
+                  }
+                }
+              }
+            },
+            "404":{
+              "description": "id not found",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/notFound"
+                  }
+                }
+              }
+            },
+            "500":{
+              "description": "oops, something error",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/internalServerError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/users/{userId}/change-password":{
+        "patch":{
+          "tags": ["users"],
+          "security": [
+            {
+              "cookieAuth":[]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "userId",
+              "description": "user ID to update password",
+              "in": "path",
+              "required": true ,
+              "schema":{
+                "type": "string",
+                "example": "user-awenwefhubwer75t6"
+              }
+            }
+          ],
+          "requestBody":{
+            "required": true,
+            "content": {
+              "application/json":{
+                "schema":{
+                  "type": "object",
+                  "properties": {
+                    "oldPassword":{
+                      "type": "string",
+                      "example":"Edu"
+                    },
+                    "newPassword":{
+                      "type": "string",
+                      "example":"newEdu"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200":{
+              "description": "update password by id",
               "content": {
                 "application/json":{
                   "schema":{
@@ -256,16 +452,11 @@
                         "type": "string",
                         "example":"success"
                       },
-                      "statusCode":{
-                        "type": "integer",
-                        "example":200
-                      },
                       "data":{
                         "type": "object",
                         "properties": {
-                          "userId":{
-                            "type": "string",
-                            "example":"user-adniuweqr6q93_afsr"
+                          "id":{
+                            "example": "user-adwesdgawe7rt"
                           }
                         }
                       }
@@ -317,31 +508,23 @@
           }
         }
       },
-      "/users/{userId}/change-password":{
-        "put":{
+      "/users/{userId}/change-email":{
+        "patch":{
           "tags": ["users"],
           "security": [
             {
-              "Authorization":[]
+              "cookieAuth":[]
             }
           ],
           "parameters": [
             {
               "name": "userId",
-              "description": "user ID to update password",
+              "description": "user ID to update email",
               "in": "path",
               "required": true ,
               "schema":{
                 "type": "string",
                 "example": "user-awenwefhubwer75t6"
-              }
-            },
-            {
-              "name":"meal_mastery",
-              "in": "cookie",
-              "required": true,
-              "schema":{
-                "example": " eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InVzZXItRFNlYmZpbkVQcWc4b05VWEZSaE4iLCJpYXQiOjE3MTMxNTE1NTV9.RM6NKR7qb-p3WK5SQjiCiLZZcr-G1PDwm_yxEAkQxn8"
               }
             }
           ],
@@ -352,13 +535,13 @@
                 "schema":{
                   "type": "object",
                   "properties": {
-                    "oldPassword":{
+                    "oldEmail":{
                       "type": "string",
-                      "example":"Edu"
+                      "example":"Edu@mail.com"
                     },
-                    "newPassword":{
+                    "newEmail":{
                       "type": "string",
-                      "example":"newEdu"
+                      "example":"newEdu@mail.com"
                     }
                   }
                 }
@@ -367,7 +550,7 @@
           },
           "responses": {
             "200":{
-              "description": "update password by id",
+              "description": "update email by id",
               "content": {
                 "application/json":{
                   "schema":{
@@ -378,9 +561,94 @@
                         "type": "string",
                         "example":"success"
                       },
-                      "statusCode":{
-                        "type": "integer",
-                        "example":200
+                      "data":{
+                        "type": "object",
+                        "properties": {
+                          "id":{
+                            "example": "user-adwesdgawe7rt"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400":{
+              "description": "invalid payload",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/badRequest"
+                  }
+                }
+              }
+            },
+            "401":{
+              "description": "unauthorized",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/unauthorized"
+                  }
+                }
+              }
+            },
+            "404":{
+              "description": "id not found",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/notFound"
+                  }
+                }
+              }
+            },
+            "500":{
+              "description": "oops, something error",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/internalServerError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/users/{userId}/delete-user":{
+        "patch":{
+          "tags": ["admin"],
+          "security": [
+            {
+              "cookieAuth":[]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "userId",
+              "description": "user ID to update is_delete",
+              "in": "path",
+              "required": true ,
+              "schema":{
+                "type": "string",
+                "example": "user-awenwefhubwer75t6"
+              }
+            }
+          ],
+          "responses": {
+            "200":{
+              "description": "update is_delete user by id",
+              "content": {
+                "application/json":{
+                  "schema":{
+
+                    "type": "object",
+                    "properties": {
+                      "status":{
+                        "type": "string",
+                        "example":"success"
                       },
                       "data":{
                         "type": "object",
@@ -449,10 +717,10 @@
                   "type": "object",
                   "properties": {
                     "email":{
-                      "example": "example@mail.com"
+                      "example": "user@mail.com"
                     },
                     "password":{
-                      "example": "newPassword"
+                      "example": "newUserPassword"
                     }
                   }
                 }
@@ -461,7 +729,7 @@
           },
           "responses": {
             "201":{
-              "description": "register users",
+              "description": "login user",
               "content": {
                 "application/json":{
                   "schema":{
@@ -470,8 +738,22 @@
                       "status":{
                         "example": "success"
                       },
-                      "statusCode":{
-                        "example": 201
+                      "message":{
+                        "example": "login successfully"
+                      },
+                      "data":{
+                        "type": "object",
+                        "properties": {
+                          "userId":{
+                            "example":"user-OWBp9E5HPuLdl2eE"
+                          },
+                          "username":{
+                            "example":"MISNO SUGIANTO"
+                          },
+                          "role":{
+                            "example":"USER"
+                          }
+                        }
                       }
                     }
                   }
@@ -514,16 +796,710 @@
           }
         }
       },
-      "/catagory":{},
-      "/category/categoryId":{},
-      "/ingredients":{},
-      "/ingredients/:ingredientId":{},
+      "/category":{},
+      "/category/{categoryId}":{},
+      "/ingredients":{
+        "get":{
+          "tags": ["ingredients"],
+          "security": [
+            {
+              "cookieAuth":[]
+            }
+          ],
+          "summary": "get all ingredients",
+          "responses": {
+            "200":{
+              "description": "get all ingredients",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "type": "object",
+                    "properties": {
+                      "status":{
+                        "example":"success"
+                      },
+                      "data":{
+                        "type": "array",
+                        "minItems": 2,
+                        "items":{
+                          "type": "object",
+                          "properties": {
+                            "id":{
+                              "example":"ingredient-vdCpHzM__YhWJI1H"
+                            },
+                            "name":{
+                              "example":"Sauce"
+                            },
+                            "unit":{
+                              "example":"pcs"
+                            },
+                            "quantity":{
+                              "type": "integer",
+                              "example":1
+                            },
+                            "createdAt":{
+                              "example":"2024-06-14T19:26:05.791Z"
+                            },
+                            "updatedAt":{
+                              "example":"2024-06-17T19:26:05.791Z"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401":{
+              "description": "unauthorized",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/unauthorized"
+                  }
+                }
+              }
+            },
+            "500":{
+              "description": "oops, something error",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/internalServerError"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post":{
+          "tags": ["admin"],
+          "security": [
+            {
+              "cookieAuth":[]
+            }
+          ],
+          "summary": "add ingredients",
+          "requestBody":{
+            "required": true,
+            "content": {
+              "application/json":{
+                "schema":{
+                  "type": "object",
+                  "properties": {
+                    "name":{},
+                    "unit":{},
+                    "quantity":{
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200":{
+              "description": "add ingredient",
+              "content": {
+                "application/json":{
+                  "schema":{
+
+                    "type": "object",
+                    "properties": {
+                      "status":{
+                        "type": "string",
+                        "example":"success"
+                      },
+                      "data":{
+                        "type": "object",
+                        "properties": {
+                          "id":{
+                            "example": "ingredient-adwesdgawe7rt"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400":{
+              "description": "invalid payload",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/badRequest"
+                  }
+                }
+              }
+            },
+            "401":{
+              "description": "unauthorized",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/unauthorized"
+                  }
+                }
+              }
+            },
+            "403":{
+              "description": "id not found",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/forbidden"
+                  }
+                }
+              }
+            },
+            "500":{
+              "description": "oops, something error",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/internalServerError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/ingredients/{ingredientId}":{
+        "patch":{
+          "summary": "update ingredient by id",
+          "tags": ["admin"],
+          "security": [
+            {
+              "cookieAuth":[]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "ingredientId",
+              "description": "ingredient ID to update ingredient",
+              "in": "path",
+              "required": true ,
+              "schema":{
+                "type": "string",
+                "example": "ingredient-awenwefhubwer75t6"
+              }
+            }
+          ],
+          "requestBody":{
+            "required": true,
+            "content": {
+              "application/json":{
+                "schema":{
+                  "type": "object",
+                  "properties": {
+                    "name":{
+                      "example":"Sugar"
+                    },
+                    "unit":{
+                      "example":"sdm"
+                    },
+                    "quantity":{
+                      "example":2
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200":{
+              "description": "update ingredient by id",
+              "content": {
+                "application/json":{
+                  "schema":{
+
+                    "type": "object",
+                    "properties": {
+                      "status":{
+                        "type": "string",
+                        "example":"success"
+                      },
+                      "data":{
+                        "type": "object",
+                        "properties": {
+                          "id":{
+                            "example": "ingredient-adwesdgawe7rt"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400":{
+              "description": "invalid payload",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/badRequest"
+                  }
+                }
+              }
+            },
+            "401":{
+              "description": "unauthorized",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/unauthorized"
+                  }
+                }
+              }
+            },
+            "404":{
+              "description": "id not found",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/notFound"
+                  }
+                }
+              }
+            },
+            "500":{
+              "description": "oops, something error",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/internalServerError"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "delete":{
+          "tags": ["admin"],
+          "summary": "delete ingredient by id",
+          "security": [
+            {
+              "cookieAuth":[]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "ingredientId",
+              "description": "ingredient ID to update ingredient",
+              "in": "path",
+              "required": true ,
+              "schema":{
+                "type": "string",
+                "example": "ingredient-awenwefhubwer75t6"
+              }
+            }
+          ],
+          "responses": {
+            "200":{
+              "description": "update ingredient by id",
+              "content": {
+                "application/json":{
+                  "schema":{
+
+                    "type": "object",
+                    "properties": {
+                      "status":{
+                        "type": "string",
+                        "example":"success"
+                      },
+                      "data":{
+                        "type": "object",
+                        "properties": {
+                          "id":{
+                            "example": "ingredient-adwesdgawe7rt"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401":{
+              "description": "unauthorized",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/unauthorized"
+                  }
+                }
+              }
+            },
+            "404":{
+              "description": "id not found",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/notFound"
+                  }
+                }
+              }
+            },
+            "500":{
+              "description": "oops, something error",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/internalServerError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "/videos":{},
-      "/videos/:videoId":{},
-      "/recipes":{},
-      "/recipes/:recipeId":{},
+      "/videos/{videoId}":{},
+      "/recipes":{
+        "get":{
+          "tags": ["recipes"],
+          "summary": "get all recipes",
+          "responses": {
+            "200":{
+              "description": "get recipes",
+              "content": {
+                "application/json":{
+                  "schema":{
+
+                    "type": "object",
+                    "properties": {
+                      "status":{
+                        "type": "string",
+                        "example":"success"
+                      },
+                      "data":{
+                        "type": "array",
+                        "minItems": 2,
+                        "items":{
+                          "type": "object",
+                          "properties": {
+                            "id":{
+                              "example": "recipe-adwesdgawe7rt"
+                            },
+                            "name":{
+                              "example":"Nasi Goreng"
+                            },
+                            "description":{
+                              "example":"loremajsdhdhsidgcausdcv"
+                            },
+                            "cuisine":{
+                              "example":"Asian"
+                            },
+                            "instructions":{
+                              "example":"loremasascasdvcs"
+                            },
+                            "recipePictureurl":{
+                              "example":"/uploads/recipePicture-17739440.png"
+                            },
+                            "ingredients":{
+                              "type": "array",
+                              "minItems": 2,
+                              "items":{
+                                "type": "object",
+                                "properties": {
+                                  "name":{
+                                    "example":"Nasi"
+                                  },
+                                  "unit":{
+                                    "example":"kg"
+                                  },
+                                  "quantity":{
+                                    "example": 2
+                                  }
+                                }
+                              }
+                            },
+                            "categoryName":{
+                              "example":"Lunch"
+                            },
+                            "VideoName":{
+                              "example":"Nasi Goreng"
+                            },
+                            "links":{
+                              "type": "array",
+                              "minItems": 3,
+                              "items":{
+                                "type": "string",
+                                "example":"https://youtu.be/Js9FXCkn798"
+                              }
+                            },
+                            "favoriteCount":{
+                              "example":10
+                            },
+                            "createdAt":{
+                              "example":""
+                            },
+                            "updatedAt":{
+                              "example":""
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "500":{
+              "description": "oops, something error",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/internalServerError"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post":{
+          "tags": ["admin"],
+          "security": [
+            {
+              "cookieAuth":[]
+            }
+          ],
+          "summary": "add recipe",
+          "requestBody":{
+            "required": false,
+            "content": {
+              "application/json":{
+                "schema":{
+                  "type": "object",
+                  "properties": {
+                    "name":{},
+                    "cuisine":{},
+                    "instructions":{},
+                    "categoryId":{},
+                    "videoId":{},
+                    "ingredientId":{
+                      "description": "field berulang, bisa menambah id lebih dari 1, disarankan minimal 2",
+                      "example":"ingredient-bcgcuafcrscfa"
+                    }
+                  }
+                }
+              },
+              "multipart/form-data":{
+                "schema":{
+                  "properties": {
+                    "recipePicture":{
+                      "format": "base64"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200":{
+              "description": "update ingredient by id",
+              "content": {
+                "application/json":{
+                  "schema":{
+
+                    "type": "object",
+                    "properties": {
+                      "status":{
+                        "type": "string",
+                        "example":"success"
+                      },
+                      "data":{
+                        "type": "object",
+                        "properties": {
+                          "id":{
+                            "example": "recipe-adwesdgawe7rt"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400":{
+              "description": "invalid payload",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/badRequest"
+                  }
+                }
+              }
+            },
+            "401":{
+              "description": "unauthorized",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/unauthorized"
+                  }
+                }
+              }
+            },
+            "500":{
+              "description": "oops, something error",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/internalServerError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/recipes/{recipeId}":{
+        "get":{
+          "summary": "get recipe by id",
+          "tags": ["recipes"],
+          "security": [
+            {
+              "cookieAuth":[]
+            }
+          ],
+          "parameters": [
+            {
+              "name": "recipeId",
+              "required": true,
+              "description": "id for get recipe",
+              "in": "path",
+              "schema":{
+"example":"recipe-jecadvcjd"
+              }
+            }
+          ],
+          "responses": {
+            "200":{
+              "description": "get recipe by id",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "type": "object",
+                    "properties": {
+                      "status":{
+                        "example":"success"
+                      },
+                      "data":{
+                        "type": "object",
+                        "properties": {
+                          "id":{
+                            "example": "recipe-adwesdgawe7rt"
+                          },
+                          "name":{
+                            "example":"Nasi Goreng"
+                          },
+                          "description":{
+                            "example":"loremajsdhdhsidgcausdcv"
+                          },
+                          "cuisine":{
+                            "example":"Asian"
+                          },
+                          "instructions":{
+                            "example":"loremasascasdvcs"
+                          },
+                          "recipePictureurl":{
+                            "example":"/uploads/recipePicture-17739440.png"
+                          },
+                          "ingredients":{
+                            "type": "array",
+                            "minItems": 2,
+                            "items":{
+                              "type": "object",
+                              "properties": {
+                                "name":{
+                                  "example":"Nasi"
+                                },
+                                "unit":{
+                                  "example":"kg"
+                                },
+                                "quantity":{
+                                  "example": 2
+                                }
+                              }
+                            }
+                          },
+                          "categoryName":{
+                            "example":"Lunch"
+                          },
+                          "VideoName":{
+                            "example":"Nasi Goreng"
+                          },
+                          "links":{
+                            "type": "array",
+                            "minItems": 3,
+                            "items":{
+                              "type": "string",
+                              "example":"https://youtu.be/Js9FXCkn798"
+                            }
+                          },
+                          "favoriteCount":{
+                            "example":10
+                          },
+                          "createdAt":{
+                            "example":""
+                          },
+                          "updatedAt":{
+                            "example":""
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401":{
+              "description": "unauthorized",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/unauthorized"
+                  }
+                }
+              }
+            },
+            "404":{
+              "description": "unauthorized",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/notFound"
+                  }
+                }
+              }
+            },
+            "500":{
+              "description": "oops, something error",
+              "content": {
+                "application/json":{
+                  "schema":{
+                    "$ref": "#/components/schemas/internalServerError"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "patch":{
+          "tags": ["admin"]
+        },
+        "delete":{
+          "tags": ["admin"]
+        }
+      },
       "/favorites":{},
-      "/favorites/:favoriteId":{}
+      "/favorites/{favoriteId}":{},
+      "/groceries":{},
+      "/groceries/{groceryId}":{}
     },
     "components": {
       "schemas": {
@@ -532,9 +1508,6 @@
           "properties": {
             "status":{
               "example":"fail"
-            },
-            "statusCode":{
-              "example":400
             },
             "message":{
               "example": "invalid paylaod"
@@ -547,9 +1520,6 @@
             "status":{
               "example":"fail"
             },
-            "statusCode":{
-              "example":401
-            },
             "message":{
               "example": "unauthorized"
             }
@@ -560,9 +1530,6 @@
           "properties": {
             "status":{
               "example":"fail"
-            },
-            "statusCode":{
-              "example":403
             },
             "message":{
               "example": "forbidden"
@@ -575,9 +1542,6 @@
             "status":{
               "example":"fail"
             },
-            "statusCode":{
-              "example":404
-            },
             "message":{
               "example": "id not found"
             }
@@ -589,9 +1553,6 @@
             "status":{
               "example":"fail"
             },
-            "statusCode":{
-              "example":500
-            },
             "message":{
               "example": "internal server error"
             }
@@ -599,9 +1560,10 @@
         }
       },
       "securitySchemes": {
-        "jwt_meal":{
-          "type": "http",
-          "scheme": "bearer"
+        "cookieAuth":{
+          "type": "apiKey",
+          "in": "cookie",
+          "name": "meal_mastery"
         }
       }
     }

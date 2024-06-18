@@ -116,15 +116,21 @@ const verifyGroceriesOwner = async(id, userId) => {
 };
 
 const deleteGroceyById = async(id) => {
-  const user = await prismaClient.grocery.delete({
+  const grocery = await prismaClient.grocery.findUnique({
     where:{
       id: id
     }
   });
 
-  if(!user) {
+  if(!grocery) {
     throw new NotFoundError('id not found');
   }
+
+  return await prismaClient.grocery.delete({
+    where:{
+      id: id
+    }
+  });
 };
 
 export default { addGrocery, getGroceries, getGroceryById, verifyGroceriesOwner, deleteGroceyById};
