@@ -32,14 +32,28 @@ const register = async (payload) => {
   };
 
 
-  return await prismaClient.user.create({
+  const userData = await prismaClient.user.create({
     data: newUser,
     select: {
       id: true,
       username:true,
-      role:true
+      role:true,
+      email: true,
+      gender: true,
+      created_at: true,
+      updated_at: true
     }
   });
+
+  return {
+    id: userData.id,
+    username: userData.username,
+    role: userData.role,
+    email: userData.email,
+    gender: userData.gender,
+    createdAt: userData.created_at,
+    updatedAt: userData.updated_at
+  };
 };
 
 const login = async (payload) => {
@@ -51,10 +65,13 @@ const login = async (payload) => {
     },
     select: {
       id: true,
+      username:true,
+      role:true,
       email: true,
-      username: true,
       password: true,
-      role: true
+      gender: true,
+      created_at: true,
+      updated_at: true
     }
   });
 
@@ -68,7 +85,15 @@ const login = async (payload) => {
     throw new AuthenticationError('Kredensial yang diberikan salah');
   }
 
-  return {id: user.id, username: user.username, role: user.role};
+  return {
+    id: user.id,
+    username: user.username,
+    role: user.role,
+    email: user.email,
+    gender: user.gender,
+    createdAt: user.created_at,
+    updatedAt: user.updated_at
+  };
 };
 
 

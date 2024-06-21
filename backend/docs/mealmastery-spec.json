@@ -1162,6 +1162,36 @@
         "get":{
           "tags": ["recipes"],
           "summary": "get all recipes",
+          "parameters": [
+            {
+              "name": "page",
+              "in": "query",
+              "schema":{
+                "example":1
+              }
+            },
+            {
+              "name": "limit",
+              "in": "query",
+              "schema":{
+                "example":10
+              }
+            },
+            {
+              "name": "categoryName",
+              "in": "query",
+              "schema":{
+                "example":"Lunch"
+              }
+            },
+            {
+              "name": "recipeName",
+              "in": "query",
+              "schema":{
+                "example":"Ayam"
+              }
+            }
+          ],
           "responses": {
             "200":{
               "description": "get recipes",

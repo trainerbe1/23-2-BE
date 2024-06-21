@@ -8,11 +8,11 @@ const register = async (req, res, next) => {
     const payload = req.body;
     const result = await usersService.register(payload);
 
-    const accessToken = generateAccessToken({id: result.userId, role: result.role});
+    const accessToken = generateAccessToken({id: result.id, role: result.role});
 
-    res.cookie('meal_mastery', accessToken, { httpOnly: true, secure: false }).status(201).json({
+    res.cookie('meal_mastery', accessToken, { httpOnly: true, secure: false, expire: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000) }).status(201).json({
       status: 'success',
-      message: 'login successfully',
+      message: 'register successfully',
       data: result
     });
 
@@ -26,9 +26,9 @@ const login = async (req, res, next) => {
     const payload = req.body;
     const result = await usersService.login(payload);
 
-    const accessToken = generateAccessToken({id: result.userId, role: result.role});
+    const accessToken = generateAccessToken({id: result.id, role: result.role});
 
-    res.cookie('meal_mastery', accessToken, { httpOnly: true, secure: false }).status(201).json({
+    res.cookie('meal_mastery', accessToken, { httpOnly: true, secure: false, expire: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000) }).status(201).json({
       status: 'success',
       message: 'login successfully',
       data: result
