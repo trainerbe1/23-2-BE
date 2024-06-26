@@ -4,7 +4,7 @@ import { validate } from "../validator/index.js";
 import { createRecipesValidator, updateRecipesValidator } from "../validator/recipesValidator.js";
 import { NotFoundError } from "../exceptions/NotFoundError.js";
 
-const addRecipe = async (payload, url) => {
+const addRecipe = async (payload) => {
   const recipe = validate(createRecipesValidator, payload);
 
   return await prismaClient.recipe.create({
@@ -14,7 +14,7 @@ const addRecipe = async (payload, url) => {
       descriptions: recipe.descriptions,
       cuisine: recipe.cuisine,
       instructions: recipe.instructions,
-      recipe_picture: url,
+      recipe_picture: recipe.recipePicture,
       category_id: recipe.categoryId,
       video_id: recipe.videoId,
       ingredient_id: recipe.ingredientId
@@ -155,7 +155,7 @@ const getRecipeById = async(id) => {
   };
 };
 
-const editRecipeById = async(id, payload, recipePicture) => {
+const editRecipeById = async(id, payload) => {
   const recipe = validate(updateRecipesValidator, payload);
 
   const recipeCount = await prismaClient.recipe.findUnique({
@@ -168,13 +168,41 @@ const editRecipeById = async(id, payload, recipePicture) => {
     throw new NotFoundError('Id not found');
   }
 
-  const data = {...recipe};
+  const data = {};
 
-  if(recipeCount.recipe_picture) {
-    data.recipe_picture = recipePicture;
+  if(recipe.name) {
+    data.name = recipe.name;
   }
 
-  delete data.ingredientId;
+  if(recipe.desscriptions) {
+    data.descriptions = recipe.descriptions;
+  }
+
+  if(recipe.cuisine) {
+    data.cuisine = recipe.cuisine;
+  }
+
+  if(recipe.instructions) {
+    data.instructions = recipe.instructions;
+  }
+
+  if(recipe.recipePicture) {
+    data.recipe_picture = recipe.recipePicture;
+  }
+
+  if(recipe.ingredientId) {
+    data.ingredient_id = recipe.ingredientId;
+  }
+
+  if(recipe.categoryId) {
+    data.category_id = recipe.categoryId;
+  }
+
+  if(recipe.videoId) {
+    data.video_id = recipe.videoId;
+  }
+
+  delete data.ingredient_id;
   return await prismaClient.recipe.update({
     where: {
       id: id,

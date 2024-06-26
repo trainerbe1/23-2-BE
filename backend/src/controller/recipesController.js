@@ -4,10 +4,9 @@ import { deleteFile } from "../utils/deleteFile.js";
 
 const addRecipe = async (req, res, next) => {
   try {
-    const {name, descriptions, cuisine, instructions, categoryId, videoId, ingredientId} = req.body;
-    const recipePicture = req.file ? `/uploads/${req.file.filename}` : new InvariantError('Masukan Gambar');
+    const {name, descriptions, cuisine, instructions, categoryId, videoId, ingredientId, recipePicture} = req.body;
 
-    const result = await recipesService.addRecipe({name, descriptions, cuisine, instructions, categoryId, videoId, ingredientId}, recipePicture);
+    const result = await recipesService.addRecipe({name, descriptions, cuisine, instructions, categoryId, videoId, ingredientId, recipePicture});
 
     res.status(201).json({
       status: 'success',
@@ -20,6 +19,27 @@ const addRecipe = async (req, res, next) => {
     next(e);
   }
 }; 
+
+const uploadRecipePicture = (req, res, next) => {
+  try {
+    if(!req.file) {
+      throw new InvariantError('Mohon untuk mengisi file gambar');
+    }
+
+    const recipePicture = req.file; 
+
+    if(recipePicture) {
+      const recipePictureUrl = `/uploads/${req.file.filename}`;
+
+      res.status(201).json({
+        status: 'success',
+        recipePictureUrl
+      });
+    }
+  } catch (e) {
+    next(e);
+  }
+};
 
 const getRecipe = async (req, res, next) => {
   try {
@@ -49,18 +69,19 @@ const getRecipeById = async (req, res, next) => {
 
 const editRecipeById = async(req, res, next) => {
   try {
-    const payload = req.body;
+    const {name, descriptions, cuisine, instructions, categoryId, videoId, ingredientId, recipePicture} = req.body;
 
     const recipe = await recipesService.getRecipeById(req.params.recipeId);
 
-    const recipePicture = req.file ? `/uploads/${req.file.filename}` : undefined;
-
-    if (req.file && recipe.recipePictureUrl) {
+    if (recipePicture) {
+      if(recipe.recipePictureUrl) {
         const filename = recipe.recipePictureUrl.split('/').pop();
         deleteFile(filename); 
+      }
+        
     };
 
-    const result = await recipesService.editRecipeById(req.params.recipeId, payload, recipePicture);
+    const result = await recipesService.editRecipeById(req.params.recipeId, {name, descriptions, cuisine, instructions, categoryId, videoId, ingredientId, recipePicture});
 
     res.status(200).json({
       status: 'success',
@@ -94,4 +115,4 @@ const deleteRecipeById = async(req, res, next) => {
   }
 };
 
-export default {addRecipe, getRecipe, getRecipeById, editRecipeById, deleteRecipeById};
+export default {addRecipe, uploadRecipePicture, getRecipe, getRecipeById, editRecipeById, deleteRecipeById};
