@@ -10,7 +10,7 @@ recipesRouter.post('/recipes', recipesController.addRecipe);
 recipesRouter.post('/recipes/file-upload', upload.single('recipePicture'), recipesController.uploadRecipePicture);
 recipesRouter.get('/recipes', recipesController.getRecipe);
 recipesRouter.get('/recipes/:recipeId', recipesController.getRecipeById);
-recipesRouter.patch('/recipes/:recipeId',upload.single('recipePicture'), recipesController.editRecipeById);
+recipesRouter.patch('/recipes/:recipeId', recipesController.editRecipeById);
 recipesRouter.delete('/recipes/:recipeId', recipesController.deleteRecipeById);
 
 export default recipesRouter;

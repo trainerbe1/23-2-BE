@@ -14,7 +14,7 @@ const addRecipe = async (payload) => {
       descriptions: recipe.descriptions,
       cuisine: recipe.cuisine,
       instructions: recipe.instructions,
-      recipe_picture: recipe.recipePicture,
+      recipe_picture: recipe.recipePictureUrl,
       category_id: recipe.categoryId,
       video_id: recipe.videoId,
       ingredient_id: recipe.ingredientId
@@ -186,8 +186,8 @@ const editRecipeById = async(id, payload) => {
     data.instructions = recipe.instructions;
   }
 
-  if(recipe.recipePicture) {
-    data.recipe_picture = recipe.recipePicture;
+  if(recipe.recipePictureUrl) {
+    data.recipe_picture = recipe.recipePictureUrl;
   }
 
   if(recipe.ingredientId) {

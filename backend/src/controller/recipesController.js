@@ -4,9 +4,9 @@ import { deleteFile } from "../utils/deleteFile.js";
 
 const addRecipe = async (req, res, next) => {
   try {
-    const {name, descriptions, cuisine, instructions, categoryId, videoId, ingredientId, recipePicture} = req.body;
+    const {name, descriptions, cuisine, instructions, categoryId, videoId, ingredientId, recipePictureUrl} = req.body;
 
-    const result = await recipesService.addRecipe({name, descriptions, cuisine, instructions, categoryId, videoId, ingredientId, recipePicture});
+    const result = await recipesService.addRecipe({name, descriptions, cuisine, instructions, categoryId, videoId, ingredientId, recipePictureUrl});
 
     res.status(201).json({
       status: 'success',
@@ -26,9 +26,9 @@ const uploadRecipePicture = (req, res, next) => {
       throw new InvariantError('Mohon untuk mengisi file gambar');
     }
 
-    const recipePicture = req.file; 
+    const picture = req.file; 
 
-    if(recipePicture) {
+    if(picture) {
       const recipePictureUrl = `/uploads/${req.file.filename}`;
 
       res.status(201).json({
@@ -69,11 +69,11 @@ const getRecipeById = async (req, res, next) => {
 
 const editRecipeById = async(req, res, next) => {
   try {
-    const {name, descriptions, cuisine, instructions, categoryId, videoId, ingredientId, recipePicture} = req.body;
+    const {name, descriptions, cuisine, instructions, categoryId, videoId, ingredientId, recipePictureUrl} = req.body;
 
     const recipe = await recipesService.getRecipeById(req.params.recipeId);
 
-    if (recipePicture) {
+    if (recipePictureUrl) {
       if(recipe.recipePictureUrl) {
         const filename = recipe.recipePictureUrl.split('/').pop();
         deleteFile(filename); 
@@ -81,7 +81,7 @@ const editRecipeById = async(req, res, next) => {
         
     };
 
-    const result = await recipesService.editRecipeById(req.params.recipeId, {name, descriptions, cuisine, instructions, categoryId, videoId, ingredientId, recipePicture});
+    const result = await recipesService.editRecipeById(req.params.recipeId, {name, descriptions, cuisine, instructions, categoryId, videoId, ingredientId, recipePictureUrl});
 
     res.status(200).json({
       status: 'success',
