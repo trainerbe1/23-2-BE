@@ -13,10 +13,9 @@
     "core-js": "^3.8.3",
     "sweetalert2": "^11.6.13",
     "vue": "^2.6.14",
+    "vue-cookies": "^1.8.4",
     "vue-router": "^3.5.1",
-
     "vue-toast-notification": "^0.5.0",
-
     "vuex": "^3.6.2"
   },
   "devDependencies": {

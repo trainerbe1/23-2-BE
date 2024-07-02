@@ -1,4 +1,3 @@
-<!-- src/components/RecipeList.vue -->
 <template>
   <b-row>
     <b-col md="4" v-for="recipe in recipes" :key="recipe.id">
@@ -12,8 +11,15 @@ import RecipeCard from './RecipeCard.vue';
 
 export default {
   name: 'RecipeList',
-  components: { RecipeCard },
-  props: ['recipes'],
+  components: {
+    RecipeCard
+  },
+  props: {
+    recipes: {
+      type: Array,
+      required: true
+    }
+  }
 };
 </script>
 

@@ -1,7 +1,9 @@
 <template>
   <div class="login-page">
     <LoginNavbar />
-    <div class="login-container d-flex align-items-center justify-content-center">
+    <div
+      class="login-container d-flex align-items-center justify-content-center"
+    >
       <div class="col-12 col-md-8 col-lg-6">
         <div class="card shadow-lg p-4">
           <div class="card-body">
@@ -27,7 +29,10 @@
                     placeholder="******"
                   ></b-form-input>
                   <div class="input-group-append">
-                    <b-button variant="outline-secondary" @click="togglePasswordVisibility">
+                    <b-button
+                      variant="outline-secondary"
+                      @click="togglePasswordVisibility"
+                    >
                       <b-icon :icon="passwordToggleIcon"></b-icon>
                     </b-button>
                   </div>
@@ -38,8 +43,10 @@
                 type="submit"
                 variant="primary"
                 class="w-100 bg-warning border-0 text-white"
-              >Login</b-button>
+                >Login</b-button
+              >
             </b-form>
+            <div v-if="error" class="text-danger mt-3">{{ error }}</div>
           </div>
         </div>
       </div>
@@ -48,78 +55,57 @@
 </template>
 
 <script>
-import Swal from 'sweetalert2';
-import { mapActions } from 'vuex';
-import LoginNavbar from '@/components/LoginNavbar.vue';
+import { mapActions } from "vuex";
+import LoginNavbar from "@/components/LoginNavbar.vue";
 
 export default {
   name: "LoginPage",
   components: {
-    LoginNavbar
+    LoginNavbar,
   },
   data() {
     return {
       email: "",
       password: "",
-      showPassword: false
+      error: null,
+      showPassword: false,
     };
   },
   computed: {
     passwordFieldType() {
-      return this.showPassword ? 'text' : 'password';
+      return this.showPassword ? "text" : "password";
     },
     passwordToggleIcon() {
-      return this.showPassword ? 'eye-slash' : 'eye';
-    }
+      return this.showPassword ? "eye-slash" : "eye";
+    },
   },
   methods: {
-    ...mapActions(['login']),
+    ...mapActions(["login"]),
     async handleLogin() {
-      // Periksa data pengguna di localStorage
-      const users = JSON.parse(localStorage.getItem('users')) || [];
-      const user = users.find(user => user.email === this.email && user.password === this.password);
-
-      if (user) {
-        // Tampilkan loading spinner
-        Swal.fire({
-          title: 'Logging in...',
-          allowOutsideClick: false,
-          didOpen: () => {
-            Swal.showLoading();
-          }
+        const response = await this.login({
+          email: this.email,
+          password: this.password,
         });
 
-        // Simulasi delay untuk login (misalnya, untuk request ke server)
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        console.log('Login response:', response);  // Tambahkan log ini
 
-        // Simpan data pengguna dan ubah status autentikasi
-        this.login(user);
-        
-        // Update swal dengan pesan sukses
-        Swal.fire({
-          icon: 'success',
-          title: 'Login Successful',
-          showConfirmButton: false,
-          timer: 1500
-        });
-
-        // Arahkan pengguna ke halaman utama setelah login berhasil
-        setTimeout(() => {
-          this.$router.push({ name: 'home' });
-        }, 1500);
+      if (response.role === 'ADMIN') {
+        if (this.$route.name !== 'AdminDashboard') {
+          console.log('Navigating to AdminDashboard'); // Tambahkan log ini
+          this.$router.push({ name: 'AdminDashboard' });
+        }
       } else {
-        // Tampilkan pesan kesalahan menggunakan SweetAlert2
-        Swal.fire({
-          icon: 'error',
-          title: 'Login Failed',
-          text: 'Incorrect email or password. Please try again.',
-        });
+        if (this.$route.name !== 'home') {
+          console.log('Navigating to Home'); // Tambahkan log ini
+          this.$router.push('/');
+        }
+      }
+      
       }
     },
     togglePasswordVisibility() {
       this.showPassword = !this.showPassword;
-    }
-  },
+    },
 };
 </script>
 
@@ -156,7 +142,6 @@ export default {
   cursor: pointer;
 }
 
-/* Tambahan untuk mempercantik form login */
 .card-title {
   font-size: 1.5rem;
   font-weight: bold;
@@ -170,5 +155,4 @@ export default {
 .input-group {
   margin-bottom: 1rem;
 }
-
 </style>

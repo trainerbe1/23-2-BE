@@ -20,7 +20,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 web.use(express.json());
 web.use(helmet());
-web.use(cors());
+web.use(cors({ credentials: true, origin: 'http://localhost:8080' }));
 web.use(cookieParser());
 web.use(express.urlencoded({extended:true}));
 

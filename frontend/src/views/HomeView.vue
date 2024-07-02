@@ -1,36 +1,38 @@
-<!-- src/views/HomeView.vue -->
 <template>
-  <div>
+  <div class="home-container">
     <AppNavbar />
     <HeroSection />
     <div class="container">
-      <h2>For You</h2>
-      <RecipeList :recipes="recipes" />
+      <RecipeList />
     </div>
+    <AboutUs />
     <AppFooter />
   </div>
 </template>
 
 <script>
-import { recipes } from "/src/mockData";
-import AppNavbar from '../components/AppNavbar.vue';
-import AppFooter from '../components/AppFooter.vue';
-import RecipeList from '../components/RecipeList.vue';
-import HeroSection from '../components/Hero.vue';
+import AppNavbar from '@/components/AppNavbar.vue';
+import RecipeList from '@/components/RecipeList.vue';
+import AppFooter from '@/components/AppFooter.vue';
+import HeroSection from '@/components/Hero.vue';
+import AboutUs from '@/components/AboutUs.vue';
+
 
 export default {
   name: 'HomeView',
-  components: { AppNavbar, AppFooter, RecipeList, HeroSection },
-  data() {
-    return {
-      recipes,
-    };
+  components:{
+    AppNavbar,
+    RecipeList,
+    AboutUs,
+    AppFooter,
+    HeroSection
   },
+  
 };
 </script>
 
 <style scoped>
-.container {
-  padding: 20px;
+.home-container {
+  text-align: center;
 }
 </style>

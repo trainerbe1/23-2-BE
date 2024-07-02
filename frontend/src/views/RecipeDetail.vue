@@ -2,14 +2,14 @@
   <div class="about">
     <AppNavbar />
     <div class="container">
-      <h1 class="text-center my-4">{{ recipe.title }}</h1>
+      <h1 class="text-center my-4">{{ recipe.name }}</h1>
 
       <!-- Display recipe image -->
       <div class="container my-4">
-        <div class="d-flex flex-column justify-content-center align-items-center" style="height: auto ;">
+        <div class="d-flex flex-column justify-content-center align-items-center" style="height: auto;">
           <span v-if="loading" class="text-muted">Loading...</span>
           <span v-else-if="error" class="text-danger">{{ error }}</span>
-          <img v-else :src="recipe.image" alt="Recipe Image" class="img-fluid mb-3 recipe-image" />
+          <img v-else :src="fullImageUrl" alt="Recipe Image" class="img-fluid mb-3 recipe-image" />
         </div>
       </div>
 
@@ -17,32 +17,32 @@
       <div class="container my-4">
         <div class="row align-items-center mb-3">
           <div class="col-md-9">
-            <h2 class="mb-0">{{ recipe.title }}</h2>
+            <h2 class="mb-0">{{ recipe.name }}</h2>
           </div>
           <div class="col-md-3 text-end">
-            <b-button size="md" variant="warning" class="mb-2" @click="toggleFavorite">
+            <b-button size="md" variant="warning" class="mb-2" @click="handleFavorite">
               <b-icon :icon="isFavorite ? 'heart-fill' : 'heart'" aria-label="favorite" variant="danger"></b-icon>
             </b-button>
-            <b-button size="md" variant="warning" class="mb-2 ms-2" style="margin-left: 5px;" @click="addToFavorites">
-              <b-icon icon="star" aria-label="favorite"></b-icon>
+            <b-button size="md" variant="warning" class="mb-2 ms-2" style="margin-left: 5px;" @click="handleGroceries">
+              <b-icon :icon="isInGroceries ? 'bookmark-fill' : 'bookmark'" aria-label="groceries"></b-icon>
             </b-button>
           </div>
         </div>
-        <p class="description">{{ recipe.description }}</p>
+        <p class="description">{{ recipe.descriptions }}</p>
         <h3 class="mb-2">Ingredients:</h3>
         <ul class="list-unstyled ingredients">
-          <li v-for="(ingredient, index) in recipe.ingredients" :key="index">• {{ ingredient }}</li>
+          <li v-for="(ingredient, index) in recipe.ingredients" :key="index">• {{ ingredient.quantity }} {{ ingredient.unit }} {{ ingredient.name }}</li>
         </ul>
         <h3 class="mb-2">Steps:</h3>
         <ol class="steps">
-          <li v-for="(step, index) in recipe.steps" :key="index">{{step}}</li>
+          <li v-for="(instruction, index) in recipe.instructions.split(', ')" :key="index">{{ instruction }}</li>
         </ol>
       </div>
 
       <!-- Video Container -->
       <div class="container my-4">
         <div class="embed-responsive embed-responsive-16by9">
-          <iframe v-if="recipe.video" class="embed-responsive-item" :src="recipe.video" allowfullscreen></iframe>
+          <iframe v-if="recipe.link" class="embed-responsive-item" :src="recipe.link" allowfullscreen></iframe>
           <p v-else class="text-center">No video available</p>
         </div>
       </div>
@@ -52,9 +52,11 @@
 </template>
 
 <script>
-import { recipes } from '/src/mockData';
+import apiService from '../api/apiService';
 import AppNavbar from '../components/AppNavbar.vue';
 import AppFooter from '../components/AppFooter.vue';
+import { mapState, mapActions } from 'vuex';
+import Swal from 'sweetalert2';
 
 export default {
   name: 'RecipeDetail',
@@ -64,39 +66,80 @@ export default {
       loading: true,
       error: null,
       recipe: {},
-      isFavorite: false // New state to track if recipe is favorite
     };
   },
+  computed: {
+    ...mapState({
+      favorites: state => state.favorites,
+      groceries: state => state.groceries,
+      isAuthenticated: state => state.isAuthenticated,
+    }),
+    isFavorite() {
+      return this.favorites.includes(this.recipe.id);
+    },
+    isInGroceries() {
+      return this.groceries.includes(this.recipe.id);
+    },
+    fullImageUrl() {
+      return `http://localhost:5000${this.recipe.recipePictureUrl}`;
+    }
+  },
   created() {
-    // Fetch recipe details based on route params
     this.fetchRecipeDetails();
   },
   methods: {
-    fetchRecipeDetails() {
+    ...mapActions(['toggleFavorite', 'toggleGroceries']),
+    async fetchRecipeDetails() {
       const recipeId = this.$route.params.id;
-      const recipe = recipes.find((recipe) => recipe.id == recipeId);
-      if (recipe) {
-        this.recipe = recipe;
+      try {
+        const response = await apiService.getRecipeById(recipeId);
+        console.log(response.data); // Debugging: Cek respons dari API
+        this.recipe = response.data.data; // Akses data dengan benar
         this.loading = false;
-      } else {
+      } catch (error) {
+        console.error('Error fetching recipe details:', error); // Debugging: Cek kesalahan
         this.error = 'Recipe not found';
         this.loading = false;
       }
     },
-    toggleFavorite() {
-      this.isFavorite = !this.isFavorite; // Toggle favorite status
+    async handleFavorite() {
+      if (!this.isAuthenticated) {
+        Swal.fire({
+          title: 'Error',
+          text: 'You need to login to add to favorites',
+          icon: 'error',
+        });
+      } else {
+        await this.$store.dispatch('toggleFavorite', this.recipe.id);
+        Swal.fire({
+          title: 'Success',
+          text: `Recipe has been ${this.isFavorite ? 'added to' : 'removed from'} favorites`,
+          icon: 'success',
+        });
+      }
     },
-    addToFavorites() {
-      // Implement logic to add to favorites
-      alert(`Added ${this.recipe.title} to favorites`);
+    async handleGroceries() {
+      if (!this.isAuthenticated) {
+        Swal.fire({
+          title: 'Error',
+          text: 'You need to login to add to groceries',
+          icon: 'error',
+        });
+      } else {
+        await this.$store.dispatch('toggleGroceries', this.recipe.id);
+        Swal.fire({
+          title: 'Success',
+          text: `Recipe has been ${this.isInGroceries ? 'added to' : 'removed from'} groceries`,
+          icon: 'success',
+        });
+      }
     }
-  }
+  },
 };
 </script>
 
 <style scoped>
 .about {
-
   align-items: center;
   justify-content: center;
 }

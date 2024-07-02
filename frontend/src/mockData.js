@@ -10,7 +10,7 @@ export const recipes = [
       video: "https://youtu.be/v2WqcHH65NQ?si=u233rRnHLOrsDkh4",
       favorite: true,
       favoriteCount: 150,
-      image: "https://via.placeholder.com/300x200?text=Spaghetti+Bolognese" // Tambahkan URL gambar
+      image: "https://images.unsplash.com/photo-1622973536968-3ead9e780960?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8c3BhZ2hldHRpJTIwYm9sb2duZXNlfGVufDB8fDB8fHww" // Tambahkan URL gambar
     },
     {
       id: 2,
@@ -21,7 +21,7 @@ export const recipes = [
       video: "https://youtu.be/DPio7tGzOgU?si=M5dIrEfzs7uzjVOG",
       favorite: false,
       favoriteCount: 150,
-      image: "https://via.placeholder.com/300x200?text=Chicken+Salad" // Tambahkan URL gambar
+      image: "https://images.unsplash.com/photo-1604909052743-94e838986d24?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y2hpY2tlbiUyMHNhbGFkfGVufDB8fDB8fHww" // Tambahkan URL gambar
     },
     {
       id: 3,

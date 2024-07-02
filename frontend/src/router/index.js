@@ -1,18 +1,18 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import RecipeListPage from '../views/RecipeListPage.vue'
-import RecipeDetail from '../views/RecipeDetail.vue'
-import FavoritePage from '../views/Favorite.vue'
-import MealPlanning from '../views/Meal.vue'
-import LoginPage from '../views/LoginPage.vue'
-import SignUp from '../views/SignUpPage.vue'
-import ProfilePage from '../views/ProfilePage.vue'
-import EditProfile from '../views/EditProfile.vue'
-import EditPassword from '../views/EditPassword.vue'
-import AboutUs from '../views/AboutUs.vue'
+import store from '../store';
+import HomeView from '@/views/HomeView.vue';
+import LoginPage from '@/views/LoginPage.vue';
+import SignUpPage from '@/views/SignUpPage.vue';
+import RecipeListPage from '@/views/RecipeListPage.vue';
+import RecipeDetail from '@/views/RecipeDetail.vue';
+import ProfilePage from '@/views/ProfilePage.vue';
+import GroceriesView from '@/views/GroceriesListPage.vue';
+import FavoriteListPage from '@/views/FavoriteListPage.vue';
+import EditProfile from '@/views/EditProfile.vue';
+import EditPassword from '@/views/EditPassword.vue';
+import AdminDashboard from '@/views/AdminDashboard.vue';
 import HelpPage from '../views/Help.vue'
-
 
 Vue.use(VueRouter)
 
@@ -22,65 +22,61 @@ const routes = [
     name: 'home',
     component: HomeView
   },
-
   {
-    path: '/recipe-list',
+    path: '/login',
+    name: 'LoginPage',
+    component: LoginPage
+  },
+  {
+    path: '/signup',
+    name: 'SignUpPage',
+    component: SignUpPage
+  },
+  {
+    path: '/recipes',
     name: 'RecipeListPage',
     component: RecipeListPage
   },
-
   {
-    path: '/recipe/:id',
+    path: '/recipes/:id',
     name: 'RecipeDetail',
-    component: RecipeDetail
-  },
-
-  {
-    path: '/FavoritePage',
-    name: 'FavoritePage',
-    component: FavoritePage
-  },
-
-  {
-    path: '/MealPlanning',
-    name: 'MealPlanning',
-    component: MealPlanning
-  },
-
-  {
-    path: '/LoginPage',
-    name: 'LoginPage',
-    component: LoginPage,
-    meta: { requiresGuest: true }
+    component: RecipeDetail,
   },
   {
-    path: '/SignUp',
-    name: 'SignUp',
-    component: SignUp,
-    meta: { requiresGuest: true }
-  },
-  {
-    path: '/ProfilePage',
+    path: '/profile',
     name: 'ProfilePage',
     component: ProfilePage,
     meta: { requiresAuth: true }
   },
   {
-    path: '/EditProfile',
+    path: '/groceries',
+    name: 'Groceries',
+    component: GroceriesView,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/favorite',
+    name: 'FavoriteListPage',
+    component: FavoriteListPage,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/edit-profile',
     name: 'EditProfile',
     component: EditProfile,
     meta: { requiresAuth: true }
   },
   {
-    path: '/EditPassword',
+    path: '/edit-password',
     name: 'EditPassword',
     component: EditPassword,
     meta: { requiresAuth: true }
   },
   {
-    path: '/AboutUs',
-    name: 'AboutUs',
-    component: AboutUs
+    path: '/admin',
+    name: 'AdminDashboard',
+    component: AdminDashboard,
+    meta: { requiresAuth: true, isAdmin: true }
   },
   {
     path: '/Help',
@@ -92,20 +88,27 @@ const routes = [
 const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
-  routes
-})
+  routes,
+});
+
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = JSON.parse(localStorage.getItem('isAuthenticated'));
-  
-  if (to.matched.some(record => record.meta.requiresGuest) && isAuthenticated) {
+  const isAuthenticated = store.getters.isAuthenticated;
+  const userRole = store.getters.userRole;
+
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!isAuthenticated) {
+      next({ name: 'LoginPage' });
+    } else if (to.matched.some(record => record.meta.isAdmin) && userRole !== 'ADMIN') {
+      alert('Access denied. Admins only.'); // Tambahkan pesan peringatan
+      next({ name: 'home' });
+    } else {
+      next();
+    }
+  } else if ((to.name === 'LoginPage' || to.name === 'SignUpPage') && isAuthenticated) {
     next({ name: 'home' });
-  } else if ((to.name === 'LoginPage' || to.name === 'SignUp') && isAuthenticated) {
-    next({ name: 'home' });
-  } else if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated) {
-    next({ name: 'LoginPage' });
   } else {
     next();
   }
 });
 
-export default router
+export default router;

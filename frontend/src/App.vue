@@ -7,19 +7,12 @@
 
 <script>
 
-import { mapActions } from 'vuex';
 
 export default {
   name: 'App',
   components: {
 
   },
-  mounted() {
-    this.initializeStore();
-  },
-  methods: {
-    ...mapActions(['initializeStore'])
-  }
 }
 </script>
 

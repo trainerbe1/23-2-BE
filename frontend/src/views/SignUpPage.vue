@@ -6,63 +6,44 @@
         <div class="card shadow-lg p-4">
           <div class="card-body">
             <h3 class="card-title text-center mb-4"><strong>Sign Up</strong></h3>
-            <b-form @submit.prevent="handleSignUp">
-              <b-form-group label="Username" label-for="username">
-                <b-form-input
-                  id="username"
-                  type="text"
-                  v-model="username"
-                  required
-                  placeholder="Enter your username"
-                ></b-form-input>
-              </b-form-group>
+            <form @submit.prevent="handleSignUp">
+              <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" v-model="username" class="form-control" required>
+              </div>
 
-              <b-form-group label="Email address" label-for="email">
-                <b-form-input
-                  id="email"
-                  type="email"
-                  v-model="email"
-                  required
-                  placeholder="email@example.com"
-                ></b-form-input>
-              </b-form-group>
+              <div class="form-group">
+                <label for="email">Email address:</label>
+                <input type="email" id="email" v-model="email" class="form-control" required>
+              </div>
 
-              <b-form-group label="Password" label-for="password">
+              <div class="form-group">
+                <label for="password">Password:</label>
                 <div class="input-group">
-                  <b-form-input
-                    id="password"
-                    :type="passwordFieldType"
-                    v-model="password"
-                    required
-                    placeholder="******"
-                  ></b-form-input>
+                  <input type="password" id="password" v-model="password" class="form-control" required>
                   <div class="input-group-append">
-                    <b-button variant="outline-secondary" @click="togglePasswordVisibility">
-                      <b-icon :icon="passwordToggleIcon"></b-icon>
-                    </b-button>
+                    <button type="button" class="btn btn-outline-warning" @click="togglePasswordVisibility">
+                      <i :class="['fa', showPassword ? 'fa-eye-slash' : 'fa-eye']"></i>
+                    </button>
                   </div>
                 </div>
-              </b-form-group>
-
-              <b-form-group label="Gender" label-for="gender">
-                <b-form-select
-                  id="gender"
-                  v-model="gender"
-                  :options="genderOptions"
-                  required
-                ></b-form-select>
-              </b-form-group>
-
-              <b-button
-                type="submit"
-                variant="primary"
-                class="w-100 bg-warning border-0 text-white"
-              >Sign Up</b-button>
-
-              <div class="mt-3 text-center">
-                <router-link to="/LoginPage">Already have an account? Login</router-link>
               </div>
-            </b-form>
+
+              <div class="form-group">
+                <label for="gender">Gender:</label>
+                <select id="gender" v-model="gender" class="form-control" required>
+                  <option value="">Select Gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+              </div>
+
+              <button type="submit" class="btn btn-warning w-100">Sign Up</button>
+
+              <div class="mt-3 text-center text-warning">
+                <router-link to="/login">Already have an account? Login</router-link>
+              </div>
+            </form>
           </div>
         </div>
       </div>
@@ -72,6 +53,7 @@
 
 <script>
 import Swal from 'sweetalert2';
+import apiService from '@/api/apiService';
 import { mapActions } from 'vuex';
 import LoginNavbar from '@/components/LoginNavbar.vue';
 
@@ -86,78 +68,46 @@ export default {
       email: "",
       password: "",
       gender: null,
-      genderOptions: [
-        { text: 'Select Gender', value: null },
-        { text: 'Male', value: 'male' },
-        { text: 'Female', value: 'female' }
-      ],
       showPassword: false
     };
-  },
-  computed: {
-    passwordFieldType() {
-      return this.showPassword ? 'text' : 'password';
-    },
-    passwordToggleIcon() {
-      return this.showPassword ? 'eye-slash' : 'eye';
-    }
   },
   methods: {
     ...mapActions(['login']),
     async handleSignUp() {
-      // Periksa apakah username atau email sudah digunakan
-      let users = JSON.parse(localStorage.getItem('users')) || [];
-      const usernameExists = users.some(user => user.username === this.username);
-      const emailExists = users.some(user => user.email === this.email);
+      try {
+        Swal.fire({
+          title: 'Signing up...',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
 
-      if (usernameExists || emailExists) {
+        const response = await apiService.register({
+          username: this.username,
+          email: this.email,
+          password: this.password,
+          gender: this.gender === 'male' // Mengonversi ke tipe boolean
+        });
+        console.log(response);
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Sign Up Successful',
+          showConfirmButton: false,
+          timer: 1000
+        });
+
+        this.$store.commit('SET_AUTHENTICATED', true);
+        this.$router.push({ name: 'home' });
+      } catch (error) {
+        console.error('Sign Up failed:', error);
         Swal.fire({
           icon: 'error',
-          title: 'Registration Failed',
-          text: usernameExists ? 'Username already exists. Please choose another one.' : 'Email already exists. Please choose another one.',
+          title: 'Sign Up Failed',
+          text: error.response.data.message || 'Something went wrong. Please try again.',
         });
-        return;
       }
-
-      // Simulasi pendaftaran pengguna dengan data dummy
-      const newUser = {
-        username: this.username,
-        email: this.email,
-        password: this.password, // Simpan password untuk login nanti
-        gender: this.gender,
-        profilePicture: 'https://via.placeholder.com/150'
-      };
-      // Simpan data pengguna ke localStorage
-      users.push(newUser);
-      localStorage.setItem('users', JSON.stringify(users));
-
-      // Tampilkan loading spinner
-      Swal.fire({
-        title: 'Signing up...',
-        allowOutsideClick: false,
-        didOpen: () => {
-          Swal.showLoading();
-        }
-      });
-
-      // Simulasi delay untuk proses sign up
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Otomatis login setelah sign up
-      this.login(newUser);
-
-      // Update swal dengan pesan sukses
-      Swal.fire({
-        icon: 'success',
-        title: 'Sign Up Successful',
-        showConfirmButton: false,
-        timer: 1500
-      });
-
-      // Arahkan pengguna ke halaman utama setelah sign up berhasil
-      setTimeout(() => {
-        this.$router.push({ name: 'home' });
-      }, 1500);
     },
     togglePasswordVisibility() {
       this.showPassword = !this.showPassword;
@@ -213,5 +163,4 @@ export default {
 .input-group {
   margin-bottom: 1rem;
 }
-
 </style>

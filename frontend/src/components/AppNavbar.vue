@@ -5,39 +5,31 @@
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav>
-          <b-nav-item-dropdown text="Recipes" right>
-            <b-dropdown-item @click="viewRecipeList">Recipe List</b-dropdown-item>
-            <b-dropdown-item href="#/category">Category</b-dropdown-item>
-          </b-nav-item-dropdown>
-          <b-nav-item href="/MealPlanning">Meal</b-nav-item>
-          <b-nav-item href="/FavoritePage">Favorite</b-nav-item>
+          <b-nav-item to="/recipes">Recipes</b-nav-item>
+          <b-nav-item to="/groceries">Groceries</b-nav-item>
+          <b-nav-item to="/favorite">Favorite</b-nav-item>
         </b-navbar-nav>
+
         <b-navbar-nav class="ml-auto">
           <template v-if="!isAuthenticated">
             <b-nav-item>
-              <router-link to="/LoginPage" class="nav-link">
-                <b-button
-                  variant="outline-dark"
-                  class="rounded-pill px-4 py-custom"
-                  >Login</b-button
-                >
+              <router-link to="/login" class="nav-link">
+                <b-button variant="outline-dark" class="rounded-pill px-4 py-custom">Login</b-button>
               </router-link>
             </b-nav-item>
             <b-nav-item>
-              <router-link to="/SignUp" class="nav-link">
-                <b-button variant="dark" class="rounded-pill px-4 py-custom"
-                  >Sign Up</b-button
-                >
+              <router-link to="/signup" class="nav-link">
+                <b-button variant="dark" class="rounded-pill px-4 py-custom">Sign Up</b-button>
               </router-link>
             </b-nav-item>
           </template>
           <template v-else>
             <b-nav-item-dropdown right>
-              <template #button-content>
-                <b-icon icon="person-circle" font-scale="1.8"></b-icon>
+              <template v-slot:button-content>
+                <b-icon icon="person-circle"></b-icon>
               </template>
-              <b-dropdown-item to="/ProfilePage">Profile</b-dropdown-item>
-              <b-dropdown-item @click="handleLogout">Logout</b-dropdown-item>
+              <b-dropdown-item @click="goToProfile">Profile</b-dropdown-item>
+              <b-dropdown-item @click="logout">Logout</b-dropdown-item>
             </b-nav-item-dropdown>
           </template>
         </b-navbar-nav>
@@ -47,38 +39,23 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
-import Swal from 'sweetalert2';
+import { mapState, mapActions } from 'vuex';
 
 export default {
   name: 'AppNavbar',
-  computed: {
-    ...mapState(["isAuthenticated", "user"]),
+  components: {
   },
-
+  computed: {
+    ...mapState({
+      isAuthenticated: state => state.isAuthenticated,
+    }),
+  },
   methods: {
-    viewRecipeList() {
-      if (this.$route.path !== '/recipe-list') {
-        this.$router.push({ name: 'RecipeListPage' });
-      }
-    },
-    ...mapActions(["logout"]),
-    handleLogout() {
-      Swal.fire({
-        title: 'Logging out...',
-        didOpen: () => {
-          Swal.showLoading();
-        },
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        allowEnterKey: false
-      });
-      
-      setTimeout(() => {
-        this.logout();
-        this.$router.push({ name: 'LoginPage' });
-        Swal.close();
-      }, 1500); // Simulate a delay for the logout process
+    ...mapActions(['logout', 'fetchUserById']),
+    async goToProfile() {
+      const userId = this.$store.state.userId;
+      await this.fetchUserById(userId);
+      this.$router.push('/profile');
     }
   },
 };
